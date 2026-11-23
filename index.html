@@ -142,7 +142,7 @@ button.btn:disabled{opacity:.45;cursor:not-allowed}
 <div class="lb" id="lb"><div class="lbimg" id="lbimg"></div><div class="lbcap" id="lbcap"></div></div>
 
 <script>
-const DATA = [{"name": "胡桃", "items": [{"id": "01-01", "file": "胡桃/胡桃_01.png", "src": "imgs/4ed6dd696cff.jpg"}, {"id": "01-02", "file": "胡桃/胡桃_02.png", "src": "imgs/f55725d8abae.jpg"}, {"id": "01-03", "file": "胡桃/胡桃_03.png", "src": "imgs/a21e9b11500e.jpg"}, {"id": "01-04", "file": "胡桃/胡桃_04.png", "src": "imgs/63795d85cea5.jpg"}, {"id": "01-05", "file": "胡桃/胡桃_05.png", "src": "imgs/3aa6cddd9704.jpg"}]}, {"name": "芙宁娜", "items": [{"id": "02-01", "file": "芙宁娜/芙宁娜_01.png", "src": "imgs/d3b3c18dac36.jpg"}, {"id": "02-02", "file": "芙宁娜/芙宁娜_02.png", "src": "imgs/2c586e4f698e.jpg"}, {"id": "02-03", "file": "芙宁娜/芙宁娜_03.png", "src": "imgs/cd9f0a64a20e.jpg"}, {"id": "02-04", "file": "芙宁娜/芙宁娜_04.png", "src": "imgs/6fc9a0b3b04a.jpg"}, {"id": "02-05", "file": "芙宁娜/芙宁娜_05.png", "src": "imgs/14c76896f5d4.jpg"}]}, {"name": "雷电将军", "items": [{"id": "03-01", "file": "雷电将军/雷电将军_01.png", "src": "imgs/2d49c5f1d12d.jpg"}, {"id": "03-02", "file": "雷电将军/雷电将军_02.png", "src": "imgs/9c9abf40e637.jpg"}, {"id": "03-03", "file": "雷电将军/雷电将军_03.png", "src": "imgs/feb8f9d0d27d.jpg"}, {"id": "03-04", "file": "雷电将军/雷电将军_04.png", "src": "imgs/a3a19c578647.jpg"}, {"id": "03-05", "file": "雷电将军/雷电将军_05.png", "src": "imgs/675e68e6433a.jpg"}]}];
+const DATA = [{"name": "胡桃", "items": [{"id": "01-01", "file": "胡桃/胡桃_01.png", "src": "imgs/4ed6dd696cff.webp"}, {"id": "01-02", "file": "胡桃/胡桃_02.png", "src": "imgs/f55725d8abae.webp"}, {"id": "01-03", "file": "胡桃/胡桃_03.png", "src": "imgs/a21e9b11500e.webp"}, {"id": "01-04", "file": "胡桃/胡桃_04.png", "src": "imgs/63795d85cea5.webp"}, {"id": "01-05", "file": "胡桃/胡桃_05.png", "src": "imgs/3aa6cddd9704.webp"}]}, {"name": "芙宁娜", "items": [{"id": "02-01", "file": "芙宁娜/芙宁娜_01.png", "src": "imgs/d3b3c18dac36.webp"}, {"id": "02-02", "file": "芙宁娜/芙宁娜_02.png", "src": "imgs/2c586e4f698e.webp"}, {"id": "02-03", "file": "芙宁娜/芙宁娜_03.png", "src": "imgs/cd9f0a64a20e.webp"}, {"id": "02-04", "file": "芙宁娜/芙宁娜_04.png", "src": "imgs/6fc9a0b3b04a.webp"}, {"id": "02-05", "file": "芙宁娜/芙宁娜_05.png", "src": "imgs/14c76896f5d4.webp"}]}, {"name": "雷电将军", "items": [{"id": "03-01", "file": "雷电将军/雷电将军_01.png", "src": "imgs/2d49c5f1d12d.webp"}, {"id": "03-02", "file": "雷电将军/雷电将军_02.png", "src": "imgs/9c9abf40e637.webp"}, {"id": "03-03", "file": "雷电将军/雷电将军_03.png", "src": "imgs/feb8f9d0d27d.webp"}, {"id": "03-04", "file": "雷电将军/雷电将军_04.png", "src": "imgs/a3a19c578647.webp"}, {"id": "03-05", "file": "雷电将军/雷电将军_05.png", "src": "imgs/675e68e6433a.webp"}]}];
 /* 提交地址用 base64 存,挡随手看源码 */
 const HOOK = (function () {
   try { return "aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2svOGY4NWY2MDUtNzc3ZS00Y2VlLWI1MDYtNzE3ODE2NmIwN2Nh" ? atob("aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2svOGY4NWY2MDUtNzc3ZS00Y2VlLWI1MDYtNzE3ODE2NmIwN2Nh") : ''; } catch (e) { return ''; }
@@ -218,7 +218,7 @@ function lazyLoad() {
       if (bg) { t.style.backgroundImage = "url('" + bg + "')"; t.removeAttribute('data-bg'); }
       io.unobserve(t);
     });
-  }, { rootMargin: '700px' });
+  }, { rootMargin: '150px' });
   nodes.forEach(t => io.observe(t));
 }
 
