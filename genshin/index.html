@@ -114,7 +114,6 @@ button.btn:disabled{opacity:.45;cursor:not-allowed}
   /* 手机上「复制清单」更顺手：不用发文件回来，粘贴到微信即可 */
   .dock #btnCopy{background:#2563eb;border-color:#2563eb;color:#fff}
   .dock #btnCopy:hover{background:#1d4fd8}
-  .dock #btnCsv{background:#fff;border-color:#dcdfe3;color:#24272c}
   .dock{flex-wrap:wrap}
   button.btn{flex:1 1 30%}
   .dock #btnSubmit{flex:1 1 100%;order:-1}
@@ -125,7 +124,7 @@ button.btn:disabled{opacity:.45;cursor:not-allowed}
 <div class="bar">
   <div class="brand">角色 选图</div>
   <input id="q" type="search" placeholder="搜索角色名…" autocomplete="off">
-  <span class="hint">点卡片＝选中，勾完底部导出清单</span>
+  <span class="hint">点卡片＝选中，勾完点「提交给画师」</span>
   <span class="spacer"></span>
 </div>
 
@@ -135,7 +134,6 @@ button.btn:disabled{opacity:.45;cursor:not-allowed}
   <span class="label">已选 <b id="sel">0</b> 张</span>
   <span class="spacer"></span>
   <button class="btn" id="btnCopy">复制清单</button>
-  <button class="btn" id="btnCsv">导出清单</button>
   <button class="btn primary" id="btnSubmit" style="display:none">提交给画师</button>
 </div>
 
@@ -243,7 +241,6 @@ function toggle(card, id) {
 
 function update() {
   $('#sel').textContent = picked.size;
-  $('#btnCsv').disabled = picked.size === 0;
   $('#btnCopy').disabled = picked.size === 0;
   if (HOOK) $('#btnSubmit').disabled = picked.size === 0;
 }
@@ -251,7 +248,7 @@ function update() {
 /* ---------- 放大 ---------- */
 function openLb(it) {
   $('#lbimg').style.backgroundImage = "url('" + it.src + "')";
-  $('#lbcap').textContent = it.id + '　（高清预览 · 压缩重编码，非原始文件）';
+  $('#lbcap').textContent = it.id;
   $('#lb').classList.add('on');
 }
 $('#lb').addEventListener('click', () => $('#lb').classList.remove('on'));
@@ -274,15 +271,6 @@ function stamp() {
   const d = new Date(), p = n => String(n).padStart(2, '0');
   return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '_' + p(d.getHours()) + p(d.getMinutes());
 }
-
-$('#btnCsv').addEventListener('click', () => {
-  const rows = lines();
-  if (!rows.length) return;
-  const csv = ['角色,编号,文件名,备注']
-    .concat(rows.map(r => [r.name, r.id, r.file, r.note].map(csvCell).join(',')))
-    .join('\r\n');
-  download('\uFEFF' + csv, '选图清单_' + stamp() + '.csv', 'text/csv;charset=utf-8');
-});
 
 $('#btnCopy').addEventListener('click', () => {
   const rows = lines();
