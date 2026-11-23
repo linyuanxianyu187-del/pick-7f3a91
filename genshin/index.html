@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>角色 选图</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+  background:#f4f5f7;color:#1c1e21;
+  padding-bottom:calc(78px + env(safe-area-inset-bottom));
+  -webkit-user-select:none;user-select:none;
+}
+.bar{
+  position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  padding:12px 20px;background:#fff;border-bottom:1px solid #e4e6e9;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.brand{font-weight:650;font-size:15px;letter-spacing:.2px;margin-right:6px}
+.hint{font-size:12px;color:#8a8f98}
+#q{
+  flex:0 1 200px;min-width:120px;padding:7px 12px;border:1px solid #dcdfe3;border-radius:8px;
+  font-size:13px;outline:none;background:#fafbfc;font-family:inherit;
+}
+#q:focus{border-color:#2563eb;background:#fff}
+.spacer{flex:1}
+main{padding:18px 20px 10px;max-width:1600px;margin:0 auto}
+.sec{margin-bottom:26px}
+.sec h2{
+  display:flex;align-items:baseline;gap:10px;margin:0 0 10px;font-size:15px;font-weight:650;
+  padding-bottom:7px;border-bottom:1px solid #e4e6e9;
+}
+.sec h2 .n{font-size:12px;font-weight:400;color:#8a8f98}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:14px}
+.card{
+  position:relative;background:#fff;border:1px solid #e4e6e9;border-radius:10px;overflow:hidden;
+  cursor:pointer;transition:border-color .12s,box-shadow .12s,transform .12s;
+}
+.card:hover{border-color:#c6cbd2}
+.card.on{border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.22)}
+.thumb{
+  width:100%;aspect-ratio:1/1;background-color:#eeeff1;
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+  -webkit-user-drag:none;
+}
+.shield{position:absolute;left:0;right:0;top:0;aspect-ratio:1/1;background:transparent}
+.num{
+  position:absolute;left:8px;top:8px;padding:2px 7px;border-radius:5px;
+  background:rgba(20,22,26,.72);color:#fff;font-size:11px;font-weight:600;
+  letter-spacing:.4px;font-variant-numeric:tabular-nums;pointer-events:none;
+}
+.tick{
+  position:absolute;right:8px;top:8px;width:22px;height:22px;border-radius:50%;
+  background:#2563eb;color:#fff;font-size:13px;line-height:22px;text-align:center;
+  opacity:0;transform:scale(.7);transition:.14s;pointer-events:none;
+}
+.card.on .tick{opacity:1;transform:scale(1)}
+.zoom{
+  position:absolute;right:6px;bottom:44px;width:26px;height:26px;border:0;border-radius:6px;
+  background:rgba(20,22,26,.62);color:#fff;font-size:13px;cursor:plain;opacity:.55;
+  transition:.12s;line-height:1;
+}
+.card:hover .zoom{opacity:1}
+.zoom:hover{background:rgba(20,22,26,.85)}
+.note{
+  display:block;width:100%;border:0;border-top:1px solid #eef0f2;padding:6px 9px;
+  font-size:12px;font-family:inherit;color:#333;background:#fff;outline:none;
+  -webkit-user-select:text;user-select:text;
+}
+.note:focus{background:#fbfcfe;border-top-color:#c9d4e8}
+.note::placeholder{color:#adb3bb}
+.dock{
+  position:fixed;left:0;right:0;bottom:0;z-index:70;display:flex;align-items:center;gap:10px;
+  padding:11px 20px calc(11px + env(safe-area-inset-bottom));
+  background:#fff;border-top:1px solid #e4e6e9;
+  box-shadow:0 -1px 4px rgba(0,0,0,.05);
+}
+.dock .label{font-size:13px;color:#5a6068}
+.dock .label b{color:#2563eb;font-size:15px}
+button.btn{
+  padding:8px 16px;border:1px solid #dcdfe3;border-radius:8px;background:#fff;color:#24272c;
+  font-size:13px;font-family:inherit;cursor:pointer;transition:.12s;font-weight:500;
+}
+button.btn:hover{background:#f4f6f9;border-color:#c6cbd2}
+button.btn.primary{background:#2563eb;border-color:#2563eb;color:#fff}
+button.btn.primary:hover{background:#1d4fd8}
+button.btn:disabled{opacity:.45;cursor:not-allowed}
+.lb{
+  position:fixed;inset:0;z-index:200;display:none;background:rgba(14,16,19,.9);
+  padding:34px;cursor:zoom-out;
+}
+.lb.on{display:flex;align-items:center;justify-content:center}
+.lbimg{
+  max-width:100%;max-height:100%;width:1100px;height:80vh;
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+}
+.lbcap{position:absolute;left:0;right:0;bottom:14px;text-align:center;color:#d6d9de;font-size:12px}
+.empty{color:#8a8f98;font-size:13px;padding:30px 4px}
+@media(max-width:640px){
+  .bar{padding:10px 12px;gap:8px}
+  main{padding:12px 12px 8px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  #q{flex:1 1 100%}
+  .brand{font-size:14px}
+  .hint{display:none}
+  .lb{padding:12px}
+  .lbimg{height:70vh}
+  button.btn{flex:1;padding:11px 10px;font-size:14px}
+  .zoom{opacity:1;width:30px;height:30px;bottom:48px}
+  .dock .label{font-size:12px}
+  /* 手机上「复制清单」更顺手：不用发文件回来，粘贴到微信即可 */
+  .dock #btnCopy{background:#2563eb;border-color:#2563eb;color:#fff}
+  .dock #btnCopy:hover{background:#1d4fd8}
+  .dock #btnCsv{background:#fff;border-color:#dcdfe3;color:#24272c}
+  .dock{flex-wrap:wrap}
+  button.btn{flex:1 1 30%}
+  .dock #btnSubmit{flex:1 1 100%;order:-1}
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="brand">角色 选图</div>
+  <input id="q" type="search" placeholder="搜索角色名…" autocomplete="off">
+  <span class="hint">点卡片＝选中，勾完底部导出清单</span>
+  <span class="spacer"></span>
+</div>
+
+<main id="wrap"></main>
+
+<div class="dock">
+  <span class="label">已选 <b id="sel">0</b> 张</span>
+  <span class="spacer"></span>
+  <button class="btn" id="btnCopy">复制清单</button>
+  <button class="btn" id="btnCsv">导出清单</button>
+  <button class="btn primary" id="btnSubmit" style="display:none">提交给画师</button>
+</div>
+
+<div class="lb" id="lb"><div class="lbimg" id="lbimg"></div><div class="lbcap" id="lbcap"></div></div>
+
+<script>
+const DATA = [{"name": "八重神子", "items": [{"id": "01-01", "file": "八重神子/01.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/11dfc0492480.webp"}, {"id": "01-02", "file": "八重神子/02.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8bf9646534fd.webp"}, {"id": "01-03", "file": "八重神子/03.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/beea7694644d.webp"}, {"id": "01-04", "file": "八重神子/04.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/87bc3d512e4c.webp"}, {"id": "01-05", "file": "八重神子/05.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0193c35fa190.webp"}, {"id": "01-06", "file": "八重神子/06.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/094f09f54454.webp"}, {"id": "01-07", "file": "八重神子/07.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3fea9eca53ec.webp"}, {"id": "01-08", "file": "八重神子/08.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5a6bc7e1bf50.webp"}, {"id": "01-09", "file": "八重神子/09.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1b3de34ebe77.webp"}, {"id": "01-10", "file": "八重神子/10.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/87eb5fef4d4d.webp"}, {"id": "01-11", "file": "八重神子/11.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/03601296ce54.webp"}, {"id": "01-12", "file": "八重神子/12.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/503ac2207eaf.webp"}, {"id": "01-13", "file": "八重神子/13.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0ada496f6a4a.webp"}, {"id": "01-14", "file": "八重神子/14.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/195f2b598f3c.webp"}, {"id": "01-15", "file": "八重神子/15.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/19fa905974a6.webp"}, {"id": "01-16", "file": "八重神子/16.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f0505287e9ff.webp"}, {"id": "01-17", "file": "八重神子/17.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ffc66b9c27d3.webp"}, {"id": "01-18", "file": "八重神子/18.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/383e449133aa.webp"}, {"id": "01-19", "file": "八重神子/19.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d91912daa0b2.webp"}, {"id": "01-20", "file": "八重神子/20.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2b342b2a0951.webp"}, {"id": "01-21", "file": "八重神子/21.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8690094b756d.webp"}, {"id": "01-22", "file": "八重神子/22.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6d83a22afb44.webp"}, {"id": "01-23", "file": "八重神子/23.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/c0d5715c7304.webp"}, {"id": "01-24", "file": "八重神子/24.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0ad96569ab67.webp"}, {"id": "01-25", "file": "八重神子/25.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3048da5e96ab.webp"}, {"id": "01-26", "file": "八重神子/26.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f6e2b35e158d.webp"}]}, {"name": "冰之女皇", "items": [{"id": "02-01", "file": "冰之女皇/01.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3e50c2af8577.webp"}, {"id": "02-02", "file": "冰之女皇/02.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/218125da0da6.webp"}, {"id": "02-03", "file": "冰之女皇/03.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e97ffab84502.webp"}, {"id": "02-04", "file": "冰之女皇/04.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9f7daf2644f5.webp"}, {"id": "02-05", "file": "冰之女皇/05.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9d18f91c0564.webp"}, {"id": "02-06", "file": "冰之女皇/06.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3e371447b513.webp"}, {"id": "02-07", "file": "冰之女皇/07.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e408c8a8ed32.webp"}, {"id": "02-08", "file": "冰之女皇/08.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/122889eb1e02.webp"}, {"id": "02-09", "file": "冰之女皇/09.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/aca7d624b4f7.webp"}, {"id": "02-10", "file": "冰之女皇/10.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/116f280591b1.webp"}, {"id": "02-11", "file": "冰之女皇/11.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6f1292bdcb6c.webp"}, {"id": "02-12", "file": "冰之女皇/12.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e1464b7022de.webp"}, {"id": "02-13", "file": "冰之女皇/13.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f1d8d21badb7.webp"}, {"id": "02-14", "file": "冰之女皇/14.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8636fae05590.webp"}, {"id": "02-15", "file": "冰之女皇/15.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/75df3169254c.webp"}, {"id": "02-16", "file": "冰之女皇/16.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0b1dde590b4c.webp"}, {"id": "02-17", "file": "冰之女皇/17.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e3915079fbb7.webp"}, {"id": "02-18", "file": "冰之女皇/18.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e9a48b4b04ec.webp"}, {"id": "02-19", "file": "冰之女皇/19.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5c6eb7efbe26.webp"}, {"id": "02-20", "file": "冰之女皇/20.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/174a2701d216.webp"}, {"id": "02-21", "file": "冰之女皇/21.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/39c1b0b09597.webp"}, {"id": "02-22", "file": "冰之女皇/22.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/a6b25478ed3b.webp"}, {"id": "02-23", "file": "冰之女皇/23.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/273d059b363a.webp"}, {"id": "02-24", "file": "冰之女皇/24.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f9ea19feb6ea.webp"}, {"id": "02-25", "file": "冰之女皇/25.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/211a8c817309.webp"}, {"id": "02-26", "file": "冰之女皇/26.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/dea89b22f17c.webp"}, {"id": "02-27", "file": "冰之女皇/27.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1d58032d3eb2.webp"}, {"id": "02-28", "file": "冰之女皇/28.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9d7fc2c9c3ff.webp"}, {"id": "02-29", "file": "冰之女皇/29.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1af92b80a942.webp"}, {"id": "02-30", "file": "冰之女皇/30.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8bcb6bbb0eb9.webp"}, {"id": "02-31", "file": "冰之女皇/31.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9860b8693588.webp"}, {"id": "02-32", "file": "冰之女皇/32.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/fdc5dbb7c0a2.webp"}, {"id": "02-33", "file": "冰之女皇/33.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/7c2c85baae96.webp"}, {"id": "02-34", "file": "冰之女皇/34.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b5909bd4a83f.webp"}, {"id": "02-35", "file": "冰之女皇/35.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d56c75eb46a7.webp"}, {"id": "02-36", "file": "冰之女皇/36.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/c0df7947ccfd.webp"}, {"id": "02-37", "file": "冰之女皇/37.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cba0b9685e88.webp"}, {"id": "02-38", "file": "冰之女皇/38.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/49aec4f0cbea.webp"}, {"id": "02-39", "file": "冰之女皇/39.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/146cea8dff57.webp"}, {"id": "02-40", "file": "冰之女皇/40.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6a71b8d9f056.webp"}, {"id": "02-41", "file": "冰之女皇/41.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d44322630d1c.webp"}, {"id": "02-42", "file": "冰之女皇/42.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/eabdf26c2d30.webp"}, {"id": "02-43", "file": "冰之女皇/43.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f44ad117eb9f.webp"}, {"id": "02-44", "file": "冰之女皇/44.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/c7c557eee16f.webp"}, {"id": "02-45", "file": "冰之女皇/45.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d8e309eda47b.webp"}, {"id": "02-46", "file": "冰之女皇/46.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/eb7b77be1a2a.webp"}, {"id": "02-47", "file": "冰之女皇/47.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/337e8aa794fd.webp"}, {"id": "02-48", "file": "冰之女皇/48.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/da8e8e2beac9.webp"}, {"id": "02-49", "file": "冰之女皇/49.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0a040d20b33b.webp"}, {"id": "02-50", "file": "冰之女皇/50.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0a0491ff2343.webp"}, {"id": "02-51", "file": "冰之女皇/51.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/c203fe9d13fa.webp"}, {"id": "02-52", "file": "冰之女皇/52.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cebd33f841aa.webp"}, {"id": "02-53", "file": "冰之女皇/53.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/29b5cadfe736.webp"}, {"id": "02-54", "file": "冰之女皇/54.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e66b3fba0411.webp"}, {"id": "02-55", "file": "冰之女皇/55.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0ec3fef2e46a.webp"}, {"id": "02-56", "file": "冰之女皇/56.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e5776bd122b0.webp"}]}, {"name": "哥伦比亚", "items": [{"id": "03-01", "file": "哥伦比亚/01.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4e26973fbd8b.webp"}, {"id": "03-02", "file": "哥伦比亚/02.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2031342bb55c.webp"}, {"id": "03-03", "file": "哥伦比亚/03.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0ff20049f3a3.webp"}, {"id": "03-04", "file": "哥伦比亚/04.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b0260c98b34a.webp"}, {"id": "03-05", "file": "哥伦比亚/05.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d2a10679ccfd.webp"}, {"id": "03-06", "file": "哥伦比亚/06.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d50164ab4857.webp"}, {"id": "03-07", "file": "哥伦比亚/07.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2c83e126f552.webp"}, {"id": "03-08", "file": "哥伦比亚/08.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/02ca07c57abc.webp"}, {"id": "03-09", "file": "哥伦比亚/09.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9dd09c08851a.webp"}, {"id": "03-10", "file": "哥伦比亚/10.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/44d8b1e4ab19.webp"}, {"id": "03-11", "file": "哥伦比亚/11.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/37c5bdf36ebf.webp"}, {"id": "03-12", "file": "哥伦比亚/12.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/af11dd4df66d.webp"}, {"id": "03-13", "file": "哥伦比亚/13.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/80ca5cf89671.webp"}, {"id": "03-14", "file": "哥伦比亚/14.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/05382bb820e6.webp"}, {"id": "03-15", "file": "哥伦比亚/15.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d46fc79743c6.webp"}, {"id": "03-16", "file": "哥伦比亚/16.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4bb30549c274.webp"}, {"id": "03-17", "file": "哥伦比亚/17.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/baacfcaf1ccc.webp"}, {"id": "03-18", "file": "哥伦比亚/18.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2d92f6224ff2.webp"}, {"id": "03-19", "file": "哥伦比亚/19.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/c63f44215e0b.webp"}, {"id": "03-20", "file": "哥伦比亚/20.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/515dcd80deed.webp"}, {"id": "03-21", "file": "哥伦比亚/21.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9f3cf6ef2a2c.webp"}, {"id": "03-22", "file": "哥伦比亚/22.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/fd4298fa2c68.webp"}, {"id": "03-23", "file": "哥伦比亚/23.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/10f768feb8c6.webp"}, {"id": "03-24", "file": "哥伦比亚/24.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/eacf46ffd16b.webp"}, {"id": "03-25", "file": "哥伦比亚/25.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5da96ebac34a.webp"}, {"id": "03-26", "file": "哥伦比亚/26.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8d3d7b3b4d6c.webp"}, {"id": "03-27", "file": "哥伦比亚/27.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2766d9fe68ae.webp"}, {"id": "03-28", "file": "哥伦比亚/28.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/158b39f3091e.webp"}, {"id": "03-29", "file": "哥伦比亚/29.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1f7ebf635fb9.webp"}, {"id": "03-30", "file": "哥伦比亚/30.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ca61665b9c25.webp"}, {"id": "03-31", "file": "哥伦比亚/31.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5848722618cf.webp"}, {"id": "03-32", "file": "哥伦比亚/32.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/befafa1caebc.webp"}, {"id": "03-33", "file": "哥伦比亚/33.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5f37e3d405b4.webp"}, {"id": "03-34", "file": "哥伦比亚/34.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/de87fc9f34c5.webp"}, {"id": "03-35", "file": "哥伦比亚/35.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/82eb13cd48d9.webp"}, {"id": "03-36", "file": "哥伦比亚/36.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9945962c273b.webp"}, {"id": "03-37", "file": "哥伦比亚/37.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/120802028c56.webp"}, {"id": "03-38", "file": "哥伦比亚/38.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5dc3459b93dd.webp"}, {"id": "03-39", "file": "哥伦比亚/39.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6518042a015b.webp"}, {"id": "03-40", "file": "哥伦比亚/40.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/829dc303ebcc.webp"}, {"id": "03-41", "file": "哥伦比亚/41.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/add6bd324a00.webp"}, {"id": "03-42", "file": "哥伦比亚/42.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2abdd6597c4f.webp"}, {"id": "03-43", "file": "哥伦比亚/43.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3ce3fb92a45e.webp"}, {"id": "03-44", "file": "哥伦比亚/44.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/57a65711c6a3.webp"}, {"id": "03-45", "file": "哥伦比亚/45.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5c2b8b306343.webp"}]}, {"name": "奥黛塔", "items": [{"id": "04-01", "file": "奥黛塔/01.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/287d7790767c.webp"}, {"id": "04-02", "file": "奥黛塔/02.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1b0004a1087a.webp"}, {"id": "04-03", "file": "奥黛塔/03.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/44d62e6a3fbb.webp"}, {"id": "04-04", "file": "奥黛塔/04.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/25cd5fb7684e.webp"}, {"id": "04-05", "file": "奥黛塔/05.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1c7bcf35b287.webp"}]}, {"name": "娜维娅", "items": [{"id": "05-01", "file": "娜维娅/01.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/907b3d81c31c.webp"}, {"id": "05-02", "file": "娜维娅/02.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f087465b9d5d.webp"}, {"id": "05-03", "file": "娜维娅/03.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5d46dc45ebc8.webp"}, {"id": "05-04", "file": "娜维娅/04.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/649ec6db8193.webp"}, {"id": "05-05", "file": "娜维娅/05.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/16ca291b4165.webp"}, {"id": "05-06", "file": "娜维娅/06.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cb5479a204c5.webp"}, {"id": "05-07", "file": "娜维娅/07.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b9c4eeb21762.webp"}, {"id": "05-08", "file": "娜维娅/08.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d96cd673652d.webp"}, {"id": "05-09", "file": "娜维娅/09.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/80ec81bd2ffe.webp"}, {"id": "05-10", "file": "娜维娅/10.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/93c48424e25b.webp"}, {"id": "05-11", "file": "娜维娅/11.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3352a95bdf0e.webp"}, {"id": "05-12", "file": "娜维娅/12.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f0a066a2cd23.webp"}, {"id": "05-13", "file": "娜维娅/13.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6a14d8bb33f4.webp"}, {"id": "05-14", "file": "娜维娅/14.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/96ade0650acc.webp"}, {"id": "05-15", "file": "娜维娅/15.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/18d1ba712424.webp"}, {"id": "05-16", "file": "娜维娅/16.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/c71bd3ce13a4.webp"}, {"id": "05-17", "file": "娜维娅/17.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/eadb0401b917.webp"}, {"id": "05-18", "file": "娜维娅/18.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/34d99f647825.webp"}, {"id": "05-19", "file": "娜维娅/19.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f71c5c6a9515.webp"}, {"id": "05-20", "file": "娜维娅/20.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/bc724e8efb91.webp"}, {"id": "05-21", "file": "娜维娅/21.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/121bab1fee31.webp"}, {"id": "05-22", "file": "娜维娅/22.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/7a1bd958ca46.webp"}, {"id": "05-23", "file": "娜维娅/23.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/394dfa7ff02d.webp"}, {"id": "05-24", "file": "娜维娅/24.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/685d30ad6564.webp"}, {"id": "05-25", "file": "娜维娅/25.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ddd486f15fcc.webp"}, {"id": "05-26", "file": "娜维娅/26.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/17ed65069492.webp"}, {"id": "05-27", "file": "娜维娅/27.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1cfbdf68cde5.webp"}, {"id": "05-28", "file": "娜维娅/28.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f06de7f46113.webp"}, {"id": "05-29", "file": "娜维娅/29.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8cf84e33df66.webp"}, {"id": "05-30", "file": "娜维娅/30.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d6dac8d32227.webp"}, {"id": "05-31", "file": "娜维娅/31.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/12ab6a1352cf.webp"}, {"id": "05-32", "file": "娜维娅/32.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0c8b10a67817.webp"}, {"id": "05-33", "file": "娜维娅/33.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b0f1e98bca8d.webp"}, {"id": "05-34", "file": "娜维娅/34.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1167b3cd6acb.webp"}, {"id": "05-35", "file": "娜维娅/35.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/a3e5dc9e3cf5.webp"}, {"id": "05-36", "file": "娜维娅/36.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/38774c44ea12.webp"}, {"id": "05-37", "file": "娜维娅/37.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/a7662179736a.webp"}, {"id": "05-38", "file": "娜维娅/38.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/eafb5f931f36.webp"}, {"id": "05-39", "file": "娜维娅/39.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/84147a48bc40.webp"}, {"id": "05-40", "file": "娜维娅/40.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4c2e8810311d.webp"}, {"id": "05-41", "file": "娜维娅/41.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0c4d6fb08470.webp"}, {"id": "05-42", "file": "娜维娅/42.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/7ee9caee0eda.webp"}, {"id": "05-43", "file": "娜维娅/43.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8e64a5e6a521.webp"}, {"id": "05-44", "file": "娜维娅/44.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3050a01629bd.webp"}, {"id": "05-45", "file": "娜维娅/45.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/22bcc9c19626.webp"}, {"id": "05-46", "file": "娜维娅/46.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/16bb0f991b54.webp"}, {"id": "05-47", "file": "娜维娅/47.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cfd92ceaac5f.webp"}, {"id": "05-48", "file": "娜维娅/48.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/34f83e743ebe.webp"}, {"id": "05-49", "file": "娜维娅/49.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4f621769a0f1.webp"}, {"id": "05-50", "file": "娜维娅/50.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d9a9f7f5b60b.webp"}, {"id": "05-51", "file": "娜维娅/51.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/09872bbbdf1c.webp"}, {"id": "05-52", "file": "娜维娅/52.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9791d8f591be.webp"}, {"id": "05-53", "file": "娜维娅/53.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0ee97073c912.webp"}, {"id": "05-54", "file": "娜维娅/54.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2a4e76497887.webp"}, {"id": "05-55", "file": "娜维娅/55.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6fde5906c414.webp"}, {"id": "05-56", "file": "娜维娅/56.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b2c726065596.webp"}]}, {"name": "沃雅妮莎", "items": [{"id": "06-01", "file": "沃雅妮莎/01.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ccded5299e1f.webp"}, {"id": "06-02", "file": "沃雅妮莎/02.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/126e2533e103.webp"}, {"id": "06-03", "file": "沃雅妮莎/03.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/c8f3d7bb5ca5.webp"}, {"id": "06-04", "file": "沃雅妮莎/04.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4a3d9c607fa6.webp"}, {"id": "06-05", "file": "沃雅妮莎/05.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/03b55461bad4.webp"}, {"id": "06-06", "file": "沃雅妮莎/06.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/541485f61749.webp"}, {"id": "06-07", "file": "沃雅妮莎/07.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/355c9a1d5343.webp"}, {"id": "06-08", "file": "沃雅妮莎/08.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/aa278ba0f2d9.webp"}, {"id": "06-09", "file": "沃雅妮莎/09.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/293e8ed640ec.webp"}, {"id": "06-10", "file": "沃雅妮莎/10.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d696bc55f67f.webp"}, {"id": "06-11", "file": "沃雅妮莎/11.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/351d65edfc5b.webp"}, {"id": "06-12", "file": "沃雅妮莎/12.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cda1e41e675f.webp"}, {"id": "06-13", "file": "沃雅妮莎/13.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/37bbd6852899.webp"}, {"id": "06-14", "file": "沃雅妮莎/14.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/a830db0a31c4.webp"}, {"id": "06-15", "file": "沃雅妮莎/15.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2187faf7f9bb.webp"}, {"id": "06-16", "file": "沃雅妮莎/16.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/91bb950e9b0c.webp"}, {"id": "06-17", "file": "沃雅妮莎/17.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e0db4bb6409a.webp"}, {"id": "06-18", "file": "沃雅妮莎/18.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cfa22219b1da.webp"}, {"id": "06-19", "file": "沃雅妮莎/19.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/327d716221d4.webp"}, {"id": "06-20", "file": "沃雅妮莎/20.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/96168372dd12.webp"}, {"id": "06-21", "file": "沃雅妮莎/21.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e3a5f529a5ec.webp"}, {"id": "06-22", "file": "沃雅妮莎/22.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4d43b6a3c428.webp"}, {"id": "06-23", "file": "沃雅妮莎/23.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/33a6a1f44586.webp"}, {"id": "06-24", "file": "沃雅妮莎/24.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e3edc0614919.webp"}, {"id": "06-25", "file": "沃雅妮莎/25.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/26ea7a9f61ec.webp"}, {"id": "06-26", "file": "沃雅妮莎/26.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/acdad4157c5a.webp"}, {"id": "06-27", "file": "沃雅妮莎/27.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/7ea28d1fc935.webp"}, {"id": "06-28", "file": "沃雅妮莎/28.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/7b32bf40dbde.webp"}, {"id": "06-29", "file": "沃雅妮莎/29.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1cbd03375744.webp"}, {"id": "06-30", "file": "沃雅妮莎/30.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/31ddbd7d4a6a.webp"}, {"id": "06-31", "file": "沃雅妮莎/31.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9672b0af93b0.webp"}, {"id": "06-32", "file": "沃雅妮莎/32.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cd792e54808a.webp"}, {"id": "06-33", "file": "沃雅妮莎/33.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/7fcb34046425.webp"}, {"id": "06-34", "file": "沃雅妮莎/34.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/989781c7bb8a.webp"}, {"id": "06-35", "file": "沃雅妮莎/35.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/496066883918.webp"}, {"id": "06-36", "file": "沃雅妮莎/36.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8524d411328a.webp"}, {"id": "06-37", "file": "沃雅妮莎/37.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9a5696b6e706.webp"}, {"id": "06-38", "file": "沃雅妮莎/38.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3b24430299cd.webp"}, {"id": "06-39", "file": "沃雅妮莎/39.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2fc5a113a6cb.webp"}, {"id": "06-40", "file": "沃雅妮莎/40.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/675d97cea6f7.webp"}, {"id": "06-41", "file": "沃雅妮莎/41.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/02b84bedad71.webp"}, {"id": "06-42", "file": "沃雅妮莎/42.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2e4aed5d890c.webp"}, {"id": "06-43", "file": "沃雅妮莎/43.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ffc64a49354b.webp"}, {"id": "06-44", "file": "沃雅妮莎/44.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/bb6a5ad877c9.webp"}, {"id": "06-45", "file": "沃雅妮莎/45.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5d50e6a4ae68.webp"}, {"id": "06-46", "file": "沃雅妮莎/46.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/847a1ee33a91.webp"}, {"id": "06-47", "file": "沃雅妮莎/47.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e598131bb29c.webp"}, {"id": "06-48", "file": "沃雅妮莎/48.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6424f7e10f86.webp"}, {"id": "06-49", "file": "沃雅妮莎/49.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b5f2e2e922a6.webp"}, {"id": "06-50", "file": "沃雅妮莎/50.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/c00ce1bb6239.webp"}, {"id": "06-51", "file": "沃雅妮莎/51.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9677de197408.webp"}, {"id": "06-52", "file": "沃雅妮莎/52.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/819bec4cf58c.webp"}, {"id": "06-53", "file": "沃雅妮莎/53.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/85a259b54c1a.webp"}]}, {"name": "申鹤", "items": [{"id": "07-01", "file": "申鹤/01.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0432f7ff44f2.webp"}, {"id": "07-02", "file": "申鹤/02.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f2db8ca45f89.webp"}, {"id": "07-03", "file": "申鹤/03.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4060a1009522.webp"}, {"id": "07-04", "file": "申鹤/04.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/31c4d8437b4d.webp"}, {"id": "07-05", "file": "申鹤/05.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/70a27146ac4e.webp"}, {"id": "07-06", "file": "申鹤/06.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0721d40d98ef.webp"}, {"id": "07-07", "file": "申鹤/07.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/95daac3c4e38.webp"}, {"id": "07-08", "file": "申鹤/08.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2371e5ce8bb0.webp"}, {"id": "07-09", "file": "申鹤/09.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f319cb1ca103.webp"}, {"id": "07-10", "file": "申鹤/10.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6260c53d52df.webp"}, {"id": "07-11", "file": "申鹤/11.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0ecd1ec828cd.webp"}, {"id": "07-12", "file": "申鹤/12.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/29862ee5af46.webp"}, {"id": "07-13", "file": "申鹤/13.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6343d69db246.webp"}, {"id": "07-14", "file": "申鹤/14.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/766daefad54f.webp"}, {"id": "07-15", "file": "申鹤/15.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f1213ecfe250.webp"}, {"id": "07-16", "file": "申鹤/16.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8292785ff981.webp"}, {"id": "07-17", "file": "申鹤/17.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/7a4d59169a4f.webp"}, {"id": "07-18", "file": "申鹤/18.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cd888ad7b0ca.webp"}, {"id": "07-19", "file": "申鹤/19.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3694764b6419.webp"}, {"id": "07-20", "file": "申鹤/20.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/bb2e33fce34f.webp"}, {"id": "07-21", "file": "申鹤/21.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e2350c358dc1.webp"}, {"id": "07-22", "file": "申鹤/22.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/74dc91802a84.webp"}, {"id": "07-23", "file": "申鹤/23.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4be93bd6ee54.webp"}, {"id": "07-24", "file": "申鹤/24.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1991362bcc0e.webp"}, {"id": "07-25", "file": "申鹤/25.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/33ed91d3d125.webp"}, {"id": "07-26", "file": "申鹤/26.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/22ee8c08df50.webp"}, {"id": "07-27", "file": "申鹤/27.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0ecfafaf22c2.webp"}, {"id": "07-28", "file": "申鹤/28.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/63292be414a5.webp"}, {"id": "07-29", "file": "申鹤/29.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/fb41d27b0622.webp"}, {"id": "07-30", "file": "申鹤/30.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b152ae736205.webp"}, {"id": "07-31", "file": "申鹤/31.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/7c7d71ea2f29.webp"}, {"id": "07-32", "file": "申鹤/32.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/fbc8b63e0350.webp"}, {"id": "07-33", "file": "申鹤/33.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/433698b22805.webp"}, {"id": "07-34", "file": "申鹤/34.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b3a8179111af.webp"}, {"id": "07-35", "file": "申鹤/35.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/a7750b27d500.webp"}, {"id": "07-36", "file": "申鹤/36.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/fd03a6149d56.webp"}, {"id": "07-37", "file": "申鹤/37.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d06b21caf4d8.webp"}, {"id": "07-38", "file": "申鹤/38.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/105afb735d26.webp"}, {"id": "07-39", "file": "申鹤/39.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1e6e26483ea9.webp"}, {"id": "07-40", "file": "申鹤/40.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9b17d1cda0c9.webp"}, {"id": "07-41", "file": "申鹤/41.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/873f51b0d118.webp"}, {"id": "07-42", "file": "申鹤/42.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/77c95bd2fc85.webp"}, {"id": "07-43", "file": "申鹤/43.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/22959df46baa.webp"}, {"id": "07-44", "file": "申鹤/44.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/741c7bce2a79.webp"}, {"id": "07-45", "file": "申鹤/45.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/91c2a19eec5a.webp"}, {"id": "07-46", "file": "申鹤/46.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d610215f65f8.webp"}, {"id": "07-47", "file": "申鹤/47.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/42a5f59d8373.webp"}, {"id": "07-48", "file": "申鹤/48.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4ad9cae56ba6.webp"}]}, {"name": "神里绫华", "items": [{"id": "08-01", "file": "神里绫华/01.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/784daba700d1.webp"}, {"id": "08-02", "file": "神里绫华/02.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f208538475ae.webp"}, {"id": "08-03", "file": "神里绫华/03.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/44fa4057186e.webp"}, {"id": "08-04", "file": "神里绫华/04.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1483e6925e1b.webp"}, {"id": "08-05", "file": "神里绫华/05.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/64203f7c82c8.webp"}, {"id": "08-06", "file": "神里绫华/06.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8dca1f33c24d.webp"}, {"id": "08-07", "file": "神里绫华/07.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f11867b24332.webp"}, {"id": "08-08", "file": "神里绫华/08.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/27cf5fb6921c.webp"}, {"id": "08-09", "file": "神里绫华/09.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d88b05703e00.webp"}, {"id": "08-10", "file": "神里绫华/10.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9abdfe00b301.webp"}, {"id": "08-11", "file": "神里绫华/11.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/c56725a71ed0.webp"}, {"id": "08-12", "file": "神里绫华/12.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/958e84b1858b.webp"}, {"id": "08-13", "file": "神里绫华/13.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b07535c070bc.webp"}, {"id": "08-14", "file": "神里绫华/14.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4b25eaf5fdae.webp"}, {"id": "08-15", "file": "神里绫华/15.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/92df42098f62.webp"}, {"id": "08-16", "file": "神里绫华/16.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ab09971a3cbc.webp"}, {"id": "08-17", "file": "神里绫华/17.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/64856b501231.webp"}, {"id": "08-18", "file": "神里绫华/18.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/567e16bc1954.webp"}, {"id": "08-19", "file": "神里绫华/19.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/89210b6c8d07.webp"}, {"id": "08-20", "file": "神里绫华/20.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/02ffd5cf21c3.webp"}, {"id": "08-21", "file": "神里绫华/21.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d6d81b6aadbe.webp"}, {"id": "08-22", "file": "神里绫华/22.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0d2436e9b307.webp"}, {"id": "08-23", "file": "神里绫华/23.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/55c02c175f67.webp"}, {"id": "08-24", "file": "神里绫华/24.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/299e4eb3f829.webp"}, {"id": "08-25", "file": "神里绫华/25.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cf6a0c5f46fb.webp"}, {"id": "08-26", "file": "神里绫华/26.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ce5b63186ede.webp"}, {"id": "08-27", "file": "神里绫华/27.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b56ab95b09c9.webp"}, {"id": "08-28", "file": "神里绫华/28.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b0b596cf07e6.webp"}, {"id": "08-29", "file": "神里绫华/29.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/25c545571fac.webp"}, {"id": "08-30", "file": "神里绫华/30.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f8a9a65f60cb.webp"}, {"id": "08-31", "file": "神里绫华/31.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5d98d3ffd6cd.webp"}, {"id": "08-32", "file": "神里绫华/32.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8dfcf577a050.webp"}, {"id": "08-33", "file": "神里绫华/33.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8aeaa3fc991b.webp"}, {"id": "08-34", "file": "神里绫华/34.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4caeeae86a21.webp"}, {"id": "08-35", "file": "神里绫华/35.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5c4ac3c263ae.webp"}, {"id": "08-36", "file": "神里绫华/36.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/c165338a9317.webp"}, {"id": "08-37", "file": "神里绫华/37.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3ba784845444.webp"}, {"id": "08-38", "file": "神里绫华/38.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/76e6fa22e9a2.webp"}, {"id": "08-39", "file": "神里绫华/39.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/706e55522349.webp"}, {"id": "08-40", "file": "神里绫华/40.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3cb4b231bf3c.webp"}, {"id": "08-41", "file": "神里绫华/41.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/537c73d24c95.webp"}, {"id": "08-42", "file": "神里绫华/42.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/05193a0ee2e0.webp"}, {"id": "08-43", "file": "神里绫华/43.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/dd4eeec222f1.webp"}, {"id": "08-44", "file": "神里绫华/44.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e08126adeb71.webp"}, {"id": "08-45", "file": "神里绫华/45.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f413a466ba15.webp"}, {"id": "08-46", "file": "神里绫华/46.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2c9b42c58117.webp"}, {"id": "08-47", "file": "神里绫华/47.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/84afb55066c4.webp"}, {"id": "08-48", "file": "神里绫华/48.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/64803f1f0dba.webp"}, {"id": "08-49", "file": "神里绫华/49.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1b785ef70705.webp"}, {"id": "08-50", "file": "神里绫华/50.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3917cede2fb3.webp"}, {"id": "08-51", "file": "神里绫华/51.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3cdb8f614849.webp"}, {"id": "08-52", "file": "神里绫华/52.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/dd3130e247d1.webp"}, {"id": "08-53", "file": "神里绫华/53.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cfc01ef32948.webp"}]}, {"name": "胡桃", "items": [{"id": "09-01", "file": "胡桃/01.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8f5cc442ffe4.webp"}, {"id": "09-02", "file": "胡桃/02.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1e68cb8a160f.webp"}, {"id": "09-03", "file": "胡桃/03.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/eefda75d7428.webp"}, {"id": "09-04", "file": "胡桃/04.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8c487c47ac1c.webp"}, {"id": "09-05", "file": "胡桃/05.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/26e137af37fb.webp"}, {"id": "09-06", "file": "胡桃/06.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/53ad6ac53291.webp"}, {"id": "09-07", "file": "胡桃/07.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ef14c9ef3dd0.webp"}, {"id": "09-08", "file": "胡桃/08.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/914eb82c744d.webp"}, {"id": "09-09", "file": "胡桃/09.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4f4ef4562656.webp"}, {"id": "09-10", "file": "胡桃/10.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e5fec956dfe1.webp"}, {"id": "09-11", "file": "胡桃/11.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5af4dd6fb116.webp"}, {"id": "09-12", "file": "胡桃/12.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f0049fd3da04.webp"}, {"id": "09-13", "file": "胡桃/13.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/99d6113a64cc.webp"}, {"id": "09-14", "file": "胡桃/14.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b7ef3970f69d.webp"}, {"id": "09-15", "file": "胡桃/15.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b30b6ac85da0.webp"}, {"id": "09-16", "file": "胡桃/16.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f00b29b6edda.webp"}, {"id": "09-17", "file": "胡桃/17.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d22dcdd4a091.webp"}, {"id": "09-18", "file": "胡桃/18.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b0086f6583bc.webp"}, {"id": "09-19", "file": "胡桃/19.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ec2ecdc324a2.webp"}, {"id": "09-20", "file": "胡桃/20.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f9fca84dc0bf.webp"}, {"id": "09-21", "file": "胡桃/21.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/725a78a335ed.webp"}, {"id": "09-22", "file": "胡桃/22.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/40d5503a0d83.webp"}, {"id": "09-23", "file": "胡桃/23.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4a14ddfa5059.webp"}, {"id": "09-24", "file": "胡桃/24.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b7887172ecbe.webp"}, {"id": "09-25", "file": "胡桃/25.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/a6bd5b702595.webp"}, {"id": "09-26", "file": "胡桃/26.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/fc7326a5e7cc.webp"}, {"id": "09-27", "file": "胡桃/27.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0283bca7db27.webp"}, {"id": "09-28", "file": "胡桃/28.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4b8b920584e9.webp"}, {"id": "09-29", "file": "胡桃/29.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/40ce93501db0.webp"}, {"id": "09-30", "file": "胡桃/30.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/bf7a32d6a2d0.webp"}, {"id": "09-31", "file": "胡桃/31.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/fc8a275daf83.webp"}, {"id": "09-32", "file": "胡桃/32.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/634809d06a1b.webp"}, {"id": "09-33", "file": "胡桃/33.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/034f8e265b5a.webp"}, {"id": "09-34", "file": "胡桃/34.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/a57286191de9.webp"}, {"id": "09-35", "file": "胡桃/35.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/1047bead5228.webp"}, {"id": "09-36", "file": "胡桃/36.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/df2530b8059d.webp"}, {"id": "09-37", "file": "胡桃/37.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9c3e3549af82.webp"}, {"id": "09-38", "file": "胡桃/38.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5563a15fb1e8.webp"}, {"id": "09-39", "file": "胡桃/39.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/90adbb03ab4a.webp"}, {"id": "09-40", "file": "胡桃/40.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9957c9c98715.webp"}, {"id": "09-41", "file": "胡桃/41.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6cebf110105f.webp"}, {"id": "09-42", "file": "胡桃/42.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b5801c9f2341.webp"}, {"id": "09-43", "file": "胡桃/43.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/36c3e7723f37.webp"}, {"id": "09-44", "file": "胡桃/44.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/329f07d4f812.webp"}, {"id": "09-45", "file": "胡桃/45.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3e762f6949a4.webp"}, {"id": "09-46", "file": "胡桃/46.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/536cb24ea19a.webp"}, {"id": "09-47", "file": "胡桃/47.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/7842c4eefe94.webp"}, {"id": "09-48", "file": "胡桃/48.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/32c2b0416a32.webp"}, {"id": "09-49", "file": "胡桃/49.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d0e02bf26044.webp"}, {"id": "09-50", "file": "胡桃/50.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4bde700dcb53.webp"}, {"id": "09-51", "file": "胡桃/51.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/e07cd0079626.webp"}, {"id": "09-52", "file": "胡桃/52.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/599d1073c67e.webp"}, {"id": "09-53", "file": "胡桃/53.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b5893db1c2e6.webp"}]}, {"name": "芙宁娜", "items": [{"id": "10-01", "file": "芙宁娜/01.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/26a71d042f59.webp"}, {"id": "10-02", "file": "芙宁娜/02.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4f6d36a9f379.webp"}, {"id": "10-03", "file": "芙宁娜/03.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/47313cfd4d88.webp"}, {"id": "10-04", "file": "芙宁娜/04.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/bf03890afe85.webp"}, {"id": "10-05", "file": "芙宁娜/05.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/91cb72a1537f.webp"}, {"id": "10-06", "file": "芙宁娜/06.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/718dd59794b3.webp"}, {"id": "10-07", "file": "芙宁娜/07.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/bec828ff75b9.webp"}, {"id": "10-08", "file": "芙宁娜/08.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ce8831700af8.webp"}, {"id": "10-09", "file": "芙宁娜/09.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/319931887ecb.webp"}, {"id": "10-10", "file": "芙宁娜/10.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/008046cb213d.webp"}, {"id": "10-11", "file": "芙宁娜/11.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6c6840dde8ee.webp"}, {"id": "10-12", "file": "芙宁娜/12.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/d6acf9424182.webp"}, {"id": "10-13", "file": "芙宁娜/13.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0a18eee53638.webp"}, {"id": "10-14", "file": "芙宁娜/14.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5eb9d13ec468.webp"}, {"id": "10-15", "file": "芙宁娜/15.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cc656de26f94.webp"}, {"id": "10-16", "file": "芙宁娜/16.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ed77f9bcafe9.webp"}, {"id": "10-17", "file": "芙宁娜/17.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/459409fd0730.webp"}, {"id": "10-18", "file": "芙宁娜/18.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/ecdc0cf70d5e.webp"}, {"id": "10-19", "file": "芙宁娜/19.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/050823decf21.webp"}, {"id": "10-20", "file": "芙宁娜/20.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/56fbd61f731a.webp"}, {"id": "10-21", "file": "芙宁娜/21.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/787fdfa4c5ad.webp"}, {"id": "10-22", "file": "芙宁娜/22.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/76672fb470ea.webp"}, {"id": "10-23", "file": "芙宁娜/23.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/a656bbccd5e7.webp"}, {"id": "10-24", "file": "芙宁娜/24.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0fc7e40b128b.webp"}, {"id": "10-25", "file": "芙宁娜/25.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/364d6986e37f.webp"}, {"id": "10-26", "file": "芙宁娜/26.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/43b38a480a13.webp"}, {"id": "10-27", "file": "芙宁娜/27.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/da5dc81c980b.webp"}, {"id": "10-28", "file": "芙宁娜/28.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/99ba8c901a90.webp"}, {"id": "10-29", "file": "芙宁娜/29.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/da5c09c2d6a1.webp"}, {"id": "10-30", "file": "芙宁娜/30.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3f810c94b8b0.webp"}, {"id": "10-31", "file": "芙宁娜/31.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/cf40303dbd09.webp"}, {"id": "10-32", "file": "芙宁娜/32.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/7d596bed1164.webp"}, {"id": "10-33", "file": "芙宁娜/33.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/bd4d0eedc5e2.webp"}, {"id": "10-34", "file": "芙宁娜/34.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6a841a3beef6.webp"}, {"id": "10-35", "file": "芙宁娜/35.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/797b5946c1b9.webp"}, {"id": "10-36", "file": "芙宁娜/36.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/57fca2eeb579.webp"}, {"id": "10-37", "file": "芙宁娜/37.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/804f6766be8d.webp"}, {"id": "10-38", "file": "芙宁娜/38.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f4692fc65cb0.webp"}, {"id": "10-39", "file": "芙宁娜/39.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3a945f832a29.webp"}, {"id": "10-40", "file": "芙宁娜/40.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/f63f8644187e.webp"}, {"id": "10-41", "file": "芙宁娜/41.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/4b70712e537c.webp"}, {"id": "10-42", "file": "芙宁娜/42.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b50d48831103.webp"}, {"id": "10-43", "file": "芙宁娜/43.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0e81f29503a6.webp"}, {"id": "10-44", "file": "芙宁娜/44.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/58ec5879c6d4.webp"}, {"id": "10-45", "file": "芙宁娜/45.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/b16aca836e3f.webp"}, {"id": "10-46", "file": "芙宁娜/46.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/af8be23de281.webp"}, {"id": "10-47", "file": "芙宁娜/47.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/7a2e62181719.webp"}, {"id": "10-48", "file": "芙宁娜/48.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/517d81875393.webp"}, {"id": "10-49", "file": "芙宁娜/49.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/69a6de1b4e3c.webp"}, {"id": "10-50", "file": "芙宁娜/50.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/0dfa67c099f2.webp"}, {"id": "10-51", "file": "芙宁娜/51.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/9fb0c720f867.webp"}, {"id": "10-52", "file": "芙宁娜/52.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8231886f7e85.webp"}, {"id": "10-53", "file": "芙宁娜/53.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/798e08435796.webp"}, {"id": "10-54", "file": "芙宁娜/54.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8d80f8d93505.webp"}, {"id": "10-55", "file": "芙宁娜/55.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8d6119f3d060.webp"}]}, {"name": "若娜瓦", "items": [{"id": "11-01", "file": "若娜瓦/01.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/c057290d44ae.webp"}, {"id": "11-02", "file": "若娜瓦/02.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/92d437f53fc7.webp"}, {"id": "11-03", "file": "若娜瓦/03.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/620fe5a0dc7a.webp"}, {"id": "11-04", "file": "若娜瓦/04.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/dc2ccfd98d04.webp"}, {"id": "11-05", "file": "若娜瓦/05.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/59b1383b38fc.webp"}, {"id": "11-06", "file": "若娜瓦/06.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/00fe9008f77f.webp"}, {"id": "11-07", "file": "若娜瓦/07.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/8a254b7f62e1.webp"}, {"id": "11-08", "file": "若娜瓦/08.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/2dd4bfd31595.webp"}, {"id": "11-09", "file": "若娜瓦/09.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/3e8af644bbca.webp"}, {"id": "11-10", "file": "若娜瓦/10.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/5bc76dee8831.webp"}, {"id": "11-11", "file": "若娜瓦/11.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/af27b0b4a4d0.webp"}, {"id": "11-12", "file": "若娜瓦/12.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/daa4952cf291.webp"}, {"id": "11-13", "file": "若娜瓦/13.png", "src": "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/genshin/imgs/6439e5cd5dbe.webp"}]}];
+/* 提交地址用 base64 存,挡随手看源码 */
+const HOOK = (function () {
+  try { return "aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2svOGY4NWY2MDUtNzc3ZS00Y2VlLWI1MDYtNzE3ODE2NmIwN2Nh" ? atob("aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2svOGY4NWY2MDUtNzc3ZS00Y2VlLWI1MDYtNzE3ODE2NmIwN2Nh") : ''; } catch (e) { return ''; }
+})();
+const CLIENT = "\u5ba2\u6237";
+const picked = new Set();
+const notes = {};
+const $ = s => document.querySelector(s);
+
+/* ---------- 渲染 ---------- */
+function build() {
+  const wrap = $('#wrap');
+  wrap.innerHTML = '';
+  let total = 0;
+  DATA.forEach(g => {
+    const sec = document.createElement('section');
+    sec.className = 'sec';
+    sec.dataset.name = g.name;
+    const h = document.createElement('h2');
+    h.innerHTML = '<span>' + esc(g.name) + '</span><span class="n">' + g.items.length + ' 张</span>';
+    sec.appendChild(h);
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    g.items.forEach(it => {
+      total++;
+      const c = document.createElement('div');
+      c.className = 'card';
+      c.dataset.id = it.id;
+      // data: 内嵌(单文件版)直接上背景；相对路径(链接版)走 data-bg，进视口才加载
+      const lazy = it.src.indexOf('data:') !== 0;
+      c.innerHTML =
+        '<div class="thumb"' + (lazy
+            ? ' data-bg="' + it.src + '"'
+            : ' style="background-image:url(\'' + it.src + '\')"') + '></div>' +
+        '<div class="shield"></div>' +
+        '<div class="num">' + it.id + '</div>' +
+        '<div class="tick">✓</div>' +
+        '<button class="zoom" type="button" title="放大看">⤢</button>' +
+        '<input class="note" placeholder="备注（可选）" maxlength="80">';
+      c.addEventListener('click', e => {
+        if (e.target.classList.contains('note')) return;
+        if (e.target.classList.contains('zoom')) { openLb(it); return; }
+        toggle(c, it.id);
+      });
+      const n = c.querySelector('.note');
+      n.addEventListener('input', () => { notes[it.id] = n.value; });
+      n.addEventListener('click', e => e.stopPropagation());
+      // 手机上弹键盘会遮住输入框，聚焦后把它滚到屏幕中间
+      n.addEventListener('focus', () => setTimeout(
+        () => n.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300));
+      grid.appendChild(c);
+    });
+    sec.appendChild(grid);
+    wrap.appendChild(sec);
+  });
+  $('#tot') && ($('#tot').textContent = total);
+  lazyLoad();
+  update();
+}
+
+/* 链接版：图片拆成独立文件，翻到哪张才下哪张，首屏不用等全部 */
+function lazyLoad() {
+  const nodes = document.querySelectorAll('.thumb[data-bg]');
+  if (!nodes.length) return;
+  if (!('IntersectionObserver' in window)) {
+    nodes.forEach(t => { t.style.backgroundImage = "url('" + t.dataset.bg + "')"; t.removeAttribute('data-bg'); });
+    return;
+  }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const t = e.target, bg = t.dataset.bg;
+      if (bg) { t.style.backgroundImage = "url('" + bg + "')"; t.removeAttribute('data-bg'); }
+      io.unobserve(t);
+    });
+  }, { rootMargin: '150px' });
+  nodes.forEach(t => io.observe(t));
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function toggle(card, id) {
+  if (picked.has(id)) { picked.delete(id); card.classList.remove('on'); }
+  else { picked.add(id); card.classList.add('on'); }
+  const n = card.querySelector('.note');
+  if (!picked.has(id) && !n.value) n.blur();
+  update();
+}
+
+function update() {
+  $('#sel').textContent = picked.size;
+  $('#btnCsv').disabled = picked.size === 0;
+  $('#btnCopy').disabled = picked.size === 0;
+  if (HOOK) $('#btnSubmit').disabled = picked.size === 0;
+}
+
+/* ---------- 放大 ---------- */
+function openLb(it) {
+  $('#lbimg').style.backgroundImage = "url('" + it.src + "')";
+  $('#lbcap').textContent = it.id + '　（高清预览 · 压缩重编码，非原始文件）';
+  $('#lb').classList.add('on');
+}
+$('#lb').addEventListener('click', () => $('#lb').classList.remove('on'));
+
+/* ---------- 导出 ---------- */
+function lines() {
+  const out = [];
+  DATA.forEach(g => {
+    const rows = g.items.filter(it => picked.has(it.id));
+    if (!rows.length) return;
+    rows.forEach(it => {
+      const note = (notes[it.id] || '').replace(/[\r\n,]+/g, ' ').trim();
+      out.push({ name: g.name, id: it.id, file: it.file, note });
+    });
+  });
+  return out;
+}
+
+function stamp() {
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '_' + p(d.getHours()) + p(d.getMinutes());
+}
+
+$('#btnCsv').addEventListener('click', () => {
+  const rows = lines();
+  if (!rows.length) return;
+  const csv = ['角色,编号,文件名,备注']
+    .concat(rows.map(r => [r.name, r.id, r.file, r.note].map(csvCell).join(',')))
+    .join('\r\n');
+  download('\uFEFF' + csv, '选图清单_' + stamp() + '.csv', 'text/csv;charset=utf-8');
+});
+
+$('#btnCopy').addEventListener('click', () => {
+  const rows = lines();
+  if (!rows.length) return;
+  const txt = rows.map(r => r.name + ' / ' + r.id + ' / ' + r.file + (r.note ? ' / ' + r.note : '')).join('\n');
+  copyText(txt);
+});
+
+/* ---------- 提交给画师 ----------
+   fetch 用 no-cors + text/plain：这是「简单请求」，不触发预检，
+   微信内置浏览器 / file:// 下也能把消息打到飞书群机器人。
+   代价是响应读不到，所以不能 100%% 确认送达，提示语留了后路。 */
+if (HOOK) {
+  $('#btnSubmit').style.display = '';
+  $('#btnSubmit').addEventListener('click', () => {
+    const rows = lines();
+    if (!rows.length) { toast('还没选图'); return; }
+    const byGroup = {};
+    rows.forEach(r => { (byGroup[r.name] = byGroup[r.name] || []).push(r); });
+    // 第一行是飞书机器人的关键词校验标记，必须与机器人「自定义关键词」里的那一行完全一致
+    let text = 'PICKSUBMIT\n【选图提交】' + (CLIENT ? CLIENT + ' · ' : '') + '共 ' + rows.length + ' 张\n';
+    Object.keys(byGroup).forEach(k => {
+      text += '\n' + k + '（' + byGroup[k].length + '）\n';
+      byGroup[k].forEach(r => {
+        text += '  ' + r.id + (r.note ? '　备注：' + r.note : '') + '\n';
+      });
+    });
+    const btn = $('#btnSubmit');
+    btn.disabled = true;
+    btn.textContent = '提交中…';
+    const done = () => {
+      btn.textContent = '已提交 ✓';
+      toast('已提交，画师马上收到');
+      setTimeout(() => { btn.textContent = '提交给画师'; btn.disabled = picked.size === 0; }, 4000);
+    };
+    fetch(HOOK, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ msg_type: 'text', content: { text: text } })
+    }).then(done).catch(() => {
+      btn.disabled = false;
+      btn.textContent = '提交给画师';
+      toast('提交没成功，请改用「复制清单」发我');
+    });
+  });
+}
+
+function csvCell(v) {
+  v = String(v == null ? '' : v);
+  return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+}
+
+function download(text, name, mime) {
+  const blob = new Blob([text], { type: mime });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2500);
+}
+
+function copyText(t) {
+  const done = () => toast('清单已复制，粘贴发我即可');
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(t).then(done).catch(() => fallback());
+  } else fallback();
+  function fallback() {
+    const ta = document.createElement('textarea');
+    ta.value = t;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    ta.remove();
+    if (ok) done();
+    else showCopyBox(t);   // 最后兜底：长按手动复制，手机上 100% 可行
+  }
+}
+
+/* 复制兜底：file:// 或老浏览器里 execCommand 也会失败，
+   弹一个只读文本框让客户长按全选复制 —— 这条路径在任何手机浏览器都通 */
+function showCopyBox(t) {
+  let m = document.getElementById('copybox');
+  if (!m) {
+    m = document.createElement('div');
+    m.id = 'copybox';
+    m.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(14,16,19,.88);' +
+      'display:flex;align-items:center;justify-content:center;padding:20px';
+    m.innerHTML =
+      '<div style="background:#fff;border-radius:12px;padding:16px;width:100%;max-width:520px">' +
+        '<div style="font-size:13px;color:#333;margin-bottom:10px;line-height:1.5">' +
+          '长按下面文字全选 → 复制 → 发给我即可</div>' +
+        '<textarea id="copyta" readonly style="width:100%;height:210px;font-size:12px;' +
+          'font-family:ui-monospace,Consolas,monospace;border:1px solid #dcdfe3;border-radius:8px;' +
+          'padding:9px;resize:vertical;background:#fafbfc;color:#24272c;' +
+          '-webkit-user-select:text;user-select:text"></textarea>' +
+        '<button class="btn" id="copyclose" style="width:100%;margin-top:12px;padding:11px">关掉</button>' +
+      '</div>';
+    document.body.appendChild(m);
+    m.addEventListener('click', e => { if (e.target === m) m.remove(); });
+    m.querySelector('#copyclose').onclick = () => m.remove();
+  }
+  document.body.appendChild(m);
+  const ta = m.querySelector('#copyta');
+  ta.value = t;
+  ta.focus();
+  try { ta.setSelectionRange(0, t.length); } catch (e) {}
+}
+
+let toastT;
+function toast(msg) {
+  let el = $('#toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.style.cssText = 'position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:300;' +
+      'background:rgba(20,22,26,.9);color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;' +
+      'transition:opacity .2s;pointer-events:none';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.opacity = 1;
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { el.style.opacity = 0; }, 2200);
+}
+
+/* ---------- 搜索 ---------- */
+$('#q').addEventListener('input', e => {
+  const k = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('.sec').forEach(s => {
+    s.style.display = !k || s.dataset.name.toLowerCase().includes(k) ? '' : 'none';
+  });
+});
+
+/* ---------- 防保存 ---------- */
+// 只挡图片区；输入框和复制兜底文本框要放行，否则手机上没法长按复制
+document.addEventListener('contextmenu', e => {
+  const t = e.target;
+  if (t && (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT')) return;
+  e.preventDefault();
+});
+document.addEventListener('dragstart', e => e.preventDefault());
+document.addEventListener('selectstart', e => {
+  const t = e.target;
+  if (t && (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT')) return;
+  if (t && t.classList && (t.classList.contains('note') || t.classList.contains('copyta'))) return;
+  e.preventDefault();
+});
+
+build();
+</script>
+</body>
+</html>
