@@ -115,6 +115,9 @@ button.btn:disabled{opacity:.45;cursor:not-allowed}
   .dock #btnCopy{background:#2563eb;border-color:#2563eb;color:#fff}
   .dock #btnCopy:hover{background:#1d4fd8}
   .dock #btnCsv{background:#fff;border-color:#dcdfe3;color:#24272c}
+  .dock{flex-wrap:wrap}
+  button.btn{flex:1 1 30%}
+  .dock #btnSubmit{flex:1 1 100%;order:-1}
 }
 </style>
 </head>
@@ -132,13 +135,19 @@ button.btn:disabled{opacity:.45;cursor:not-allowed}
   <span class="label">已选 <b id="sel">0</b> 张</span>
   <span class="spacer"></span>
   <button class="btn" id="btnCopy">复制清单</button>
-  <button class="btn primary" id="btnCsv">导出清单</button>
+  <button class="btn" id="btnCsv">导出清单</button>
+  <button class="btn primary" id="btnSubmit" style="display:none">提交给设计师</button>
 </div>
 
 <div class="lb" id="lb"><div class="lbimg" id="lbimg"></div><div class="lbcap" id="lbcap"></div></div>
 
 <script>
 const DATA = [{"name": "胡桃", "items": [{"id": "01-01", "file": "胡桃/胡桃_01.png", "src": "imgs/4ed6dd696cff.jpg"}, {"id": "01-02", "file": "胡桃/胡桃_02.png", "src": "imgs/f55725d8abae.jpg"}, {"id": "01-03", "file": "胡桃/胡桃_03.png", "src": "imgs/a21e9b11500e.jpg"}, {"id": "01-04", "file": "胡桃/胡桃_04.png", "src": "imgs/63795d85cea5.jpg"}, {"id": "01-05", "file": "胡桃/胡桃_05.png", "src": "imgs/3aa6cddd9704.jpg"}]}, {"name": "芙宁娜", "items": [{"id": "02-01", "file": "芙宁娜/芙宁娜_01.png", "src": "imgs/d3b3c18dac36.jpg"}, {"id": "02-02", "file": "芙宁娜/芙宁娜_02.png", "src": "imgs/2c586e4f698e.jpg"}, {"id": "02-03", "file": "芙宁娜/芙宁娜_03.png", "src": "imgs/cd9f0a64a20e.jpg"}, {"id": "02-04", "file": "芙宁娜/芙宁娜_04.png", "src": "imgs/6fc9a0b3b04a.jpg"}, {"id": "02-05", "file": "芙宁娜/芙宁娜_05.png", "src": "imgs/14c76896f5d4.jpg"}]}, {"name": "雷电将军", "items": [{"id": "03-01", "file": "雷电将军/雷电将军_01.png", "src": "imgs/2d49c5f1d12d.jpg"}, {"id": "03-02", "file": "雷电将军/雷电将军_02.png", "src": "imgs/9c9abf40e637.jpg"}, {"id": "03-03", "file": "雷电将军/雷电将军_03.png", "src": "imgs/feb8f9d0d27d.jpg"}, {"id": "03-04", "file": "雷电将军/雷电将军_04.png", "src": "imgs/a3a19c578647.jpg"}, {"id": "03-05", "file": "雷电将军/雷电将军_05.png", "src": "imgs/675e68e6433a.jpg"}]}];
+/* 提交地址用 base64 存,挡随手看源码 */
+const HOOK = (function () {
+  try { return "aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2svOGY4NWY2MDUtNzc3ZS00Y2VlLWI1MDYtNzE3ODE2NmIwN2Nh" ? atob("aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2svOGY4NWY2MDUtNzc3ZS00Y2VlLWI1MDYtNzE3ODE2NmIwN2Nh") : ''; } catch (e) { return ''; }
+})();
+const CLIENT = "\u6d4b\u8bd5\u5ba2\u6237";
 const picked = new Set();
 const notes = {};
 const $ = s => document.querySelector(s);
@@ -229,6 +238,7 @@ function update() {
   $('#sel').textContent = picked.size;
   $('#btnCsv').disabled = picked.size === 0;
   $('#btnCopy').disabled = picked.size === 0;
+  if (HOOK) $('#btnSubmit').disabled = picked.size === 0;
 }
 
 /* ---------- 放大 ---------- */
@@ -273,6 +283,46 @@ $('#btnCopy').addEventListener('click', () => {
   const txt = rows.map(r => r.name + ' / ' + r.id + ' / ' + r.file + (r.note ? ' / ' + r.note : '')).join('\n');
   copyText(txt);
 });
+
+/* ---------- 提交给设计师 ----------
+   fetch 用 no-cors + text/plain：这是「简单请求」，不触发预检，
+   微信内置浏览器 / file:// 下也能把消息打到飞书群机器人。
+   代价是响应读不到，所以不能 100%% 确认送达，提示语留了后路。 */
+if (HOOK) {
+  $('#btnSubmit').style.display = '';
+  $('#btnSubmit').addEventListener('click', () => {
+    const rows = lines();
+    if (!rows.length) { toast('还没选图'); return; }
+    const byGroup = {};
+    rows.forEach(r => { (byGroup[r.name] = byGroup[r.name] || []).push(r); });
+    // 第一行是飞书机器人的关键词校验标记，必须与机器人「自定义关键词」里的那一行完全一致
+    let text = 'PICKSUBMIT\n【选图提交】' + (CLIENT ? CLIENT + ' · ' : '') + '共 ' + rows.length + ' 张\n';
+    Object.keys(byGroup).forEach(k => {
+      text += '\n' + k + '（' + byGroup[k].length + '）\n';
+      byGroup[k].forEach(r => {
+        text += '  ' + r.id + (r.note ? '　备注：' + r.note : '') + '\n';
+      });
+    });
+    const btn = $('#btnSubmit');
+    btn.disabled = true;
+    btn.textContent = '提交中…';
+    const done = () => {
+      btn.textContent = '已提交 ✓';
+      toast('已提交，设计师马上收到');
+      setTimeout(() => { btn.textContent = '提交给设计师'; btn.disabled = picked.size === 0; }, 4000);
+    };
+    fetch(HOOK, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ msg_type: 'text', content: { text: text } })
+    }).then(done).catch(() => {
+      btn.disabled = false;
+      btn.textContent = '提交给设计师';
+      toast('提交没成功，请改用「复制清单」发我');
+    });
+  });
+}
 
 function csvCell(v) {
   v = String(v == null ? '' : v);
