@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>测试选图</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+  background:#f4f5f7;color:#1c1e21;
+  padding-bottom:calc(78px + env(safe-area-inset-bottom));
+  -webkit-user-select:none;user-select:none;
+}
+.bar{
+  position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  padding:12px 20px;background:#fff;border-bottom:1px solid #e4e6e9;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.brand{font-weight:650;font-size:15px;letter-spacing:.2px;margin-right:6px}
+.hint{font-size:12px;color:#8a8f98}
+#q{
+  flex:0 1 200px;min-width:120px;padding:7px 12px;border:1px solid #dcdfe3;border-radius:8px;
+  font-size:13px;outline:none;background:#fafbfc;font-family:inherit;
+}
+#q:focus{border-color:#2563eb;background:#fff}
+.spacer{flex:1}
+main{padding:18px 20px 10px;max-width:1600px;margin:0 auto}
+.sec{margin-bottom:26px}
+.sec h2{
+  display:flex;align-items:baseline;gap:10px;margin:0 0 10px;font-size:15px;font-weight:650;
+  padding-bottom:7px;border-bottom:1px solid #e4e6e9;
+}
+.sec h2 .n{font-size:12px;font-weight:400;color:#8a8f98}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:14px}
+.card{
+  position:relative;background:#fff;border:1px solid #e4e6e9;border-radius:10px;overflow:hidden;
+  cursor:pointer;transition:border-color .12s,box-shadow .12s,transform .12s;
+}
+.card:hover{border-color:#c6cbd2}
+.card.on{border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.22)}
+.thumb{
+  width:100%;aspect-ratio:1/1;background-color:#eeeff1;
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+  -webkit-user-drag:none;
+}
+.shield{position:absolute;left:0;right:0;top:0;aspect-ratio:1/1;background:transparent}
+.num{
+  position:absolute;left:8px;top:8px;padding:2px 7px;border-radius:5px;
+  background:rgba(20,22,26,.72);color:#fff;font-size:11px;font-weight:600;
+  letter-spacing:.4px;font-variant-numeric:tabular-nums;pointer-events:none;
+}
+.tick{
+  position:absolute;right:8px;top:8px;width:22px;height:22px;border-radius:50%;
+  background:#2563eb;color:#fff;font-size:13px;line-height:22px;text-align:center;
+  opacity:0;transform:scale(.7);transition:.14s;pointer-events:none;
+}
+.card.on .tick{opacity:1;transform:scale(1)}
+.zoom{
+  position:absolute;right:6px;bottom:44px;width:26px;height:26px;border:0;border-radius:6px;
+  background:rgba(20,22,26,.62);color:#fff;font-size:13px;cursor:plain;opacity:.55;
+  transition:.12s;line-height:1;
+}
+.card:hover .zoom{opacity:1}
+.zoom:hover{background:rgba(20,22,26,.85)}
+.note{
+  display:block;width:100%;border:0;border-top:1px solid #eef0f2;padding:6px 9px;
+  font-size:12px;font-family:inherit;color:#333;background:#fff;outline:none;
+  -webkit-user-select:text;user-select:text;
+}
+.note:focus{background:#fbfcfe;border-top-color:#c9d4e8}
+.note::placeholder{color:#adb3bb}
+.dock{
+  position:fixed;left:0;right:0;bottom:0;z-index:70;display:flex;align-items:center;gap:10px;
+  padding:11px 20px calc(11px + env(safe-area-inset-bottom));
+  background:#fff;border-top:1px solid #e4e6e9;
+  box-shadow:0 -1px 4px rgba(0,0,0,.05);
+}
+.dock .label{font-size:13px;color:#5a6068}
+.dock .label b{color:#2563eb;font-size:15px}
+button.btn{
+  padding:8px 16px;border:1px solid #dcdfe3;border-radius:8px;background:#fff;color:#24272c;
+  font-size:13px;font-family:inherit;cursor:pointer;transition:.12s;font-weight:500;
+}
+button.btn:hover{background:#f4f6f9;border-color:#c6cbd2}
+button.btn.primary{background:#2563eb;border-color:#2563eb;color:#fff}
+button.btn.primary:hover{background:#1d4fd8}
+button.btn:disabled{opacity:.45;cursor:not-allowed}
+.lb{
+  position:fixed;inset:0;z-index:200;display:none;background:rgba(14,16,19,.9);
+  padding:34px;cursor:zoom-out;
+}
+.lb.on{display:flex;align-items:center;justify-content:center}
+.lbimg{
+  max-width:100%;max-height:100%;width:1100px;height:80vh;
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+}
+.lbcap{position:absolute;left:0;right:0;bottom:14px;text-align:center;color:#d6d9de;font-size:12px}
+.empty{color:#8a8f98;font-size:13px;padding:30px 4px}
+@media(max-width:640px){
+  .bar{padding:10px 12px;gap:8px}
+  main{padding:12px 12px 8px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  #q{flex:1 1 100%}
+  .brand{font-size:14px}
+  .hint{display:none}
+  .lb{padding:12px}
+  .lbimg{height:70vh}
+  button.btn{flex:1;padding:11px 10px;font-size:14px}
+  .zoom{opacity:1;width:30px;height:30px;bottom:48px}
+  .dock .label{font-size:12px}
+  /* 手机上「复制清单」更顺手：不用发文件回来，粘贴到微信即可 */
+  .dock #btnCopy{background:#2563eb;border-color:#2563eb;color:#fff}
+  .dock #btnCopy:hover{background:#1d4fd8}
+  .dock #btnCsv{background:#fff;border-color:#dcdfe3;color:#24272c}
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="brand">测试选图</div>
+  <input id="q" type="search" placeholder="搜索角色名…" autocomplete="off">
+  <span class="hint">点卡片＝选中，勾完底部导出清单</span>
+  <span class="spacer"></span>
+</div>
+
+<main id="wrap"></main>
+
+<div class="dock">
+  <span class="label">已选 <b id="sel">0</b> 张</span>
+  <span class="spacer"></span>
+  <button class="btn" id="btnCopy">复制清单</button>
+  <button class="btn primary" id="btnCsv">导出清单</button>
+</div>
+
+<div class="lb" id="lb"><div class="lbimg" id="lbimg"></div><div class="lbcap" id="lbcap"></div></div>
+
+<script>
+const DATA = [{"name": "胡桃", "items": [{"id": "01-01", "file": "胡桃/胡桃_01.png", "src": "imgs/4ed6dd696cff.jpg"}, {"id": "01-02", "file": "胡桃/胡桃_02.png", "src": "imgs/f55725d8abae.jpg"}, {"id": "01-03", "file": "胡桃/胡桃_03.png", "src": "imgs/a21e9b11500e.jpg"}, {"id": "01-04", "file": "胡桃/胡桃_04.png", "src": "imgs/63795d85cea5.jpg"}, {"id": "01-05", "file": "胡桃/胡桃_05.png", "src": "imgs/3aa6cddd9704.jpg"}]}, {"name": "芙宁娜", "items": [{"id": "02-01", "file": "芙宁娜/芙宁娜_01.png", "src": "imgs/d3b3c18dac36.jpg"}, {"id": "02-02", "file": "芙宁娜/芙宁娜_02.png", "src": "imgs/2c586e4f698e.jpg"}, {"id": "02-03", "file": "芙宁娜/芙宁娜_03.png", "src": "imgs/cd9f0a64a20e.jpg"}, {"id": "02-04", "file": "芙宁娜/芙宁娜_04.png", "src": "imgs/6fc9a0b3b04a.jpg"}, {"id": "02-05", "file": "芙宁娜/芙宁娜_05.png", "src": "imgs/14c76896f5d4.jpg"}]}, {"name": "雷电将军", "items": [{"id": "03-01", "file": "雷电将军/雷电将军_01.png", "src": "imgs/2d49c5f1d12d.jpg"}, {"id": "03-02", "file": "雷电将军/雷电将军_02.png", "src": "imgs/9c9abf40e637.jpg"}, {"id": "03-03", "file": "雷电将军/雷电将军_03.png", "src": "imgs/feb8f9d0d27d.jpg"}, {"id": "03-04", "file": "雷电将军/雷电将军_04.png", "src": "imgs/a3a19c578647.jpg"}, {"id": "03-05", "file": "雷电将军/雷电将军_05.png", "src": "imgs/675e68e6433a.jpg"}]}];
+const picked = new Set();
+const notes = {};
+const $ = s => document.querySelector(s);
+
+/* ---------- 渲染 ---------- */
+function build() {
+  const wrap = $('#wrap');
+  wrap.innerHTML = '';
+  let total = 0;
+  DATA.forEach(g => {
+    const sec = document.createElement('section');
+    sec.className = 'sec';
+    sec.dataset.name = g.name;
+    const h = document.createElement('h2');
+    h.innerHTML = '<span>' + esc(g.name) + '</span><span class="n">' + g.items.length + ' 张</span>';
+    sec.appendChild(h);
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    g.items.forEach(it => {
+      total++;
+      const c = document.createElement('div');
+      c.className = 'card';
+      c.dataset.id = it.id;
+      // data: 内嵌(单文件版)直接上背景；相对路径(链接版)走 data-bg，进视口才加载
+      const lazy = it.src.indexOf('data:') !== 0;
+      c.innerHTML =
+        '<div class="thumb"' + (lazy
+            ? ' data-bg="' + it.src + '"'
+            : ' style="background-image:url(\'' + it.src + '\')"') + '></div>' +
+        '<div class="shield"></div>' +
+        '<div class="num">' + it.id + '</div>' +
+        '<div class="tick">✓</div>' +
+        '<button class="zoom" type="button" title="放大看">⤢</button>' +
+        '<input class="note" placeholder="备注（可选）" maxlength="80">';
+      c.addEventListener('click', e => {
+        if (e.target.classList.contains('note')) return;
+        if (e.target.classList.contains('zoom')) { openLb(it); return; }
+        toggle(c, it.id);
+      });
+      const n = c.querySelector('.note');
+      n.addEventListener('input', () => { notes[it.id] = n.value; });
+      n.addEventListener('click', e => e.stopPropagation());
+      // 手机上弹键盘会遮住输入框，聚焦后把它滚到屏幕中间
+      n.addEventListener('focus', () => setTimeout(
+        () => n.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300));
+      grid.appendChild(c);
+    });
+    sec.appendChild(grid);
+    wrap.appendChild(sec);
+  });
+  $('#tot') && ($('#tot').textContent = total);
+  lazyLoad();
+  update();
+}
+
+/* 链接版：图片拆成独立文件，翻到哪张才下哪张，首屏不用等全部 */
+function lazyLoad() {
+  const nodes = document.querySelectorAll('.thumb[data-bg]');
+  if (!nodes.length) return;
+  if (!('IntersectionObserver' in window)) {
+    nodes.forEach(t => { t.style.backgroundImage = "url('" + t.dataset.bg + "')"; t.removeAttribute('data-bg'); });
+    return;
+  }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const t = e.target, bg = t.dataset.bg;
+      if (bg) { t.style.backgroundImage = "url('" + bg + "')"; t.removeAttribute('data-bg'); }
+      io.unobserve(t);
+    });
+  }, { rootMargin: '700px' });
+  nodes.forEach(t => io.observe(t));
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function toggle(card, id) {
+  if (picked.has(id)) { picked.delete(id); card.classList.remove('on'); }
+  else { picked.add(id); card.classList.add('on'); }
+  const n = card.querySelector('.note');
+  if (!picked.has(id) && !n.value) n.blur();
+  update();
+}
+
+function update() {
+  $('#sel').textContent = picked.size;
+  $('#btnCsv').disabled = picked.size === 0;
+  $('#btnCopy').disabled = picked.size === 0;
+}
+
+/* ---------- 放大 ---------- */
+function openLb(it) {
+  $('#lbimg').style.backgroundImage = "url('" + it.src + "')";
+  $('#lbcap').textContent = it.id + '　（高清预览 · 压缩重编码，非原始文件）';
+  $('#lb').classList.add('on');
+}
+$('#lb').addEventListener('click', () => $('#lb').classList.remove('on'));
+
+/* ---------- 导出 ---------- */
+function lines() {
+  const out = [];
+  DATA.forEach(g => {
+    const rows = g.items.filter(it => picked.has(it.id));
+    if (!rows.length) return;
+    rows.forEach(it => {
+      const note = (notes[it.id] || '').replace(/[\r\n,]+/g, ' ').trim();
+      out.push({ name: g.name, id: it.id, file: it.file, note });
+    });
+  });
+  return out;
+}
+
+function stamp() {
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '_' + p(d.getHours()) + p(d.getMinutes());
+}
+
+$('#btnCsv').addEventListener('click', () => {
+  const rows = lines();
+  if (!rows.length) return;
+  const csv = ['角色,编号,文件名,备注']
+    .concat(rows.map(r => [r.name, r.id, r.file, r.note].map(csvCell).join(',')))
+    .join('\r\n');
+  download('\uFEFF' + csv, '选图清单_' + stamp() + '.csv', 'text/csv;charset=utf-8');
+});
+
+$('#btnCopy').addEventListener('click', () => {
+  const rows = lines();
+  if (!rows.length) return;
+  const txt = rows.map(r => r.name + ' / ' + r.id + ' / ' + r.file + (r.note ? ' / ' + r.note : '')).join('\n');
+  copyText(txt);
+});
+
+function csvCell(v) {
+  v = String(v == null ? '' : v);
+  return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+}
+
+function download(text, name, mime) {
+  const blob = new Blob([text], { type: mime });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2500);
+}
+
+function copyText(t) {
+  const done = () => toast('清单已复制，粘贴发我即可');
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(t).then(done).catch(() => fallback());
+  } else fallback();
+  function fallback() {
+    const ta = document.createElement('textarea');
+    ta.value = t;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    ta.remove();
+    if (ok) done();
+    else showCopyBox(t);   // 最后兜底：长按手动复制，手机上 100% 可行
+  }
+}
+
+/* 复制兜底：file:// 或老浏览器里 execCommand 也会失败，
+   弹一个只读文本框让客户长按全选复制 —— 这条路径在任何手机浏览器都通 */
+function showCopyBox(t) {
+  let m = document.getElementById('copybox');
+  if (!m) {
+    m = document.createElement('div');
+    m.id = 'copybox';
+    m.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(14,16,19,.88);' +
+      'display:flex;align-items:center;justify-content:center;padding:20px';
+    m.innerHTML =
+      '<div style="background:#fff;border-radius:12px;padding:16px;width:100%;max-width:520px">' +
+        '<div style="font-size:13px;color:#333;margin-bottom:10px;line-height:1.5">' +
+          '长按下面文字全选 → 复制 → 发给我即可</div>' +
+        '<textarea id="copyta" readonly style="width:100%;height:210px;font-size:12px;' +
+          'font-family:ui-monospace,Consolas,monospace;border:1px solid #dcdfe3;border-radius:8px;' +
+          'padding:9px;resize:vertical;background:#fafbfc;color:#24272c;' +
+          '-webkit-user-select:text;user-select:text"></textarea>' +
+        '<button class="btn" id="copyclose" style="width:100%;margin-top:12px;padding:11px">关掉</button>' +
+      '</div>';
+    document.body.appendChild(m);
+    m.addEventListener('click', e => { if (e.target === m) m.remove(); });
+    m.querySelector('#copyclose').onclick = () => m.remove();
+  }
+  document.body.appendChild(m);
+  const ta = m.querySelector('#copyta');
+  ta.value = t;
+  ta.focus();
+  try { ta.setSelectionRange(0, t.length); } catch (e) {}
+}
+
+let toastT;
+function toast(msg) {
+  let el = $('#toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.style.cssText = 'position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:300;' +
+      'background:rgba(20,22,26,.9);color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;' +
+      'transition:opacity .2s;pointer-events:none';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.opacity = 1;
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { el.style.opacity = 0; }, 2200);
+}
+
+/* ---------- 搜索 ---------- */
+$('#q').addEventListener('input', e => {
+  const k = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('.sec').forEach(s => {
+    s.style.display = !k || s.dataset.name.toLowerCase().includes(k) ? '' : 'none';
+  });
+});
+
+/* ---------- 防保存 ---------- */
+// 只挡图片区；输入框和复制兜底文本框要放行，否则手机上没法长按复制
+document.addEventListener('contextmenu', e => {
+  const t = e.target;
+  if (t && (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT')) return;
+  e.preventDefault();
+});
+document.addEventListener('dragstart', e => e.preventDefault());
+document.addEventListener('selectstart', e => {
+  const t = e.target;
+  if (t && (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT')) return;
+  if (t && t.classList && (t.classList.contains('note') || t.classList.contains('copyta'))) return;
+  e.preventDefault();
+});
+
+build();
+</script>
+</body>
+</html>
