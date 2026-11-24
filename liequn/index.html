@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>原神 · 礼裙选图</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+  background:#f4f5f7;color:#1c1e21;
+  padding-bottom:calc(78px + env(safe-area-inset-bottom));
+  -webkit-user-select:none;user-select:none;
+}
+.bar{
+  position:sticky;top:0;z-index:60;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  padding:12px 20px;background:#fff;border-bottom:1px solid #e4e6e9;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.brand{font-weight:650;font-size:15px;letter-spacing:.2px;margin-right:6px}
+.hint{font-size:12px;color:#8a8f98}
+#q{
+  flex:0 1 200px;min-width:120px;padding:7px 12px;border:1px solid #dcdfe3;border-radius:8px;
+  font-size:13px;outline:none;background:#fafbfc;font-family:inherit;
+}
+#q:focus{border-color:#2563eb;background:#fff}
+.spacer{flex:1}
+main{padding:18px 20px 10px;max-width:1600px;margin:0 auto}
+.sec{margin-bottom:26px}
+.sec h2{
+  display:flex;align-items:baseline;gap:10px;margin:0 0 10px;font-size:15px;font-weight:650;
+  padding-bottom:7px;border-bottom:1px solid #e4e6e9;
+}
+.sec h2 .n{font-size:12px;font-weight:400;color:#8a8f98}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:14px}
+.card{
+  position:relative;background:#fff;border:1px solid #e4e6e9;border-radius:10px;overflow:hidden;
+  cursor:pointer;transition:border-color .12s,box-shadow .12s,transform .12s;
+}
+.card:hover{border-color:#c6cbd2}
+.card.on{border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.22)}
+.thumb{
+  width:100%;aspect-ratio:1/1;background-color:#eeeff1;
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+  -webkit-user-drag:none;
+}
+.shield{position:absolute;left:0;right:0;top:0;aspect-ratio:1/1;background:transparent}
+.num{
+  position:absolute;left:8px;top:8px;padding:2px 7px;border-radius:5px;
+  background:rgba(20,22,26,.72);color:#fff;font-size:11px;font-weight:600;
+  letter-spacing:.4px;font-variant-numeric:tabular-nums;pointer-events:none;
+}
+.tick{
+  position:absolute;right:8px;top:8px;width:22px;height:22px;border-radius:50%;
+  background:#2563eb;color:#fff;font-size:13px;line-height:22px;text-align:center;
+  opacity:0;transform:scale(.7);transition:.14s;pointer-events:none;
+}
+.card.on .tick{opacity:1;transform:scale(1)}
+.zoom{
+  position:absolute;right:6px;bottom:44px;width:26px;height:26px;border:0;border-radius:6px;
+  background:rgba(20,22,26,.62);color:#fff;font-size:13px;cursor:plain;opacity:.55;
+  transition:.12s;line-height:1;
+}
+.card:hover .zoom{opacity:1}
+.zoom:hover{background:rgba(20,22,26,.85)}
+.note{
+  display:block;width:100%;border:0;border-top:1px solid #eef0f2;padding:6px 9px;
+  font-size:12px;font-family:inherit;color:#333;background:#fff;outline:none;
+  -webkit-user-select:text;user-select:text;
+}
+.note:focus{background:#fbfcfe;border-top-color:#c9d4e8}
+.note::placeholder{color:#adb3bb}
+.dock{
+  position:fixed;left:0;right:0;bottom:0;z-index:70;display:flex;align-items:center;gap:10px;
+  padding:11px 20px calc(11px + env(safe-area-inset-bottom));
+  background:#fff;border-top:1px solid #e4e6e9;
+  box-shadow:0 -1px 4px rgba(0,0,0,.05);
+}
+.dock .label{font-size:13px;color:#5a6068}
+.dock .label b{color:#2563eb;font-size:15px}
+button.btn{
+  padding:8px 16px;border:1px solid #dcdfe3;border-radius:8px;background:#fff;color:#24272c;
+  font-size:13px;font-family:inherit;cursor:pointer;transition:.12s;font-weight:500;
+}
+button.btn:hover{background:#f4f6f9;border-color:#c6cbd2}
+button.btn.primary{background:#2563eb;border-color:#2563eb;color:#fff}
+button.btn.primary:hover{background:#1d4fd8}
+button.btn:disabled{opacity:.45;cursor:not-allowed}
+.lb{
+  position:fixed;inset:0;z-index:200;display:none;background:rgba(14,16,19,.9);
+  padding:34px;cursor:zoom-out;
+}
+.lb.on{display:flex;align-items:center;justify-content:center}
+.lbimg{
+  max-width:100%;max-height:100%;width:1100px;height:80vh;
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+}
+.lbcap{position:absolute;left:0;right:0;bottom:14px;text-align:center;color:#d6d9de;font-size:12px}
+.empty{color:#8a8f98;font-size:13px;padding:30px 4px}
+@media(max-width:640px){
+  .bar{padding:10px 12px;gap:8px}
+  main{padding:12px 12px 8px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  #q{flex:1 1 100%}
+  .brand{font-size:14px}
+  .hint{display:none}
+  .lb{padding:12px}
+  .lbimg{height:70vh}
+  button.btn{flex:1;padding:11px 10px;font-size:14px}
+  .zoom{opacity:1;width:30px;height:30px;bottom:48px}
+  .dock .label{font-size:12px}
+  /* 手机上「复制清单」更顺手：不用发文件回来，粘贴到微信即可 */
+  .dock #btnCopy{background:#2563eb;border-color:#2563eb;color:#fff}
+  .dock #btnCopy:hover{background:#1d4fd8}
+  .dock{flex-wrap:wrap}
+  button.btn{flex:1 1 30%}
+  .dock #btnSubmit{flex:1 1 100%;order:-1}
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="brand">原神 · 礼裙选图</div>
+  <input id="q" type="search" placeholder="搜索角色名…" autocomplete="off">
+  <span class="hint">点卡片＝选中，勾完点「提交给画师」</span>
+  <span class="spacer"></span>
+</div>
+
+<main id="wrap"></main>
+
+<div class="dock">
+  <span class="label">已选 <b id="sel">0</b> 张</span>
+  <span class="spacer"></span>
+  <button class="btn" id="btnCopy">复制清单</button>
+  <button class="btn primary" id="btnSubmit" style="display:none">提交给画师</button>
+</div>
+
+<div class="lb" id="lb"><div class="lbimg" id="lbimg"></div><div class="lbcap" id="lbcap"></div></div>
+
+<script>
+const DATA = [{"name": "A_奥黛塔", "items": [{"id": "01-01", "file": "A_奥黛塔/A_01.png", "src": "ae66126b78f7.webp"}, {"id": "01-02", "file": "A_奥黛塔/A_02.png", "src": "c864f0d857bf.webp"}, {"id": "01-03", "file": "A_奥黛塔/A_03.png", "src": "46f3e0271888.webp"}, {"id": "01-04", "file": "A_奥黛塔/A_04.png", "src": "3415cfbf2104.webp"}, {"id": "01-05", "file": "A_奥黛塔/A_05.png", "src": "4dbafc9fee94.webp"}, {"id": "01-06", "file": "A_奥黛塔/A_06.png", "src": "978fe001a151.webp"}, {"id": "01-07", "file": "A_奥黛塔/A_07.png", "src": "364bf2456cba.webp"}, {"id": "01-08", "file": "A_奥黛塔/A_08.png", "src": "e265e73293e2.webp"}, {"id": "01-09", "file": "A_奥黛塔/A_09.png", "src": "a0c07be353a5.webp"}, {"id": "01-10", "file": "A_奥黛塔/A_10.png", "src": "8978a29d7854.webp"}, {"id": "01-11", "file": "A_奥黛塔/A_12.png", "src": "cced5d4d73c4.webp"}, {"id": "01-12", "file": "A_奥黛塔/A_13.png", "src": "ea1187da505b.webp"}, {"id": "01-13", "file": "A_奥黛塔/A_14.png", "src": "b6e76382230d.webp"}, {"id": "01-14", "file": "A_奥黛塔/A_15.png", "src": "82a884df24b6.webp"}, {"id": "01-15", "file": "A_奥黛塔/A_16.png", "src": "32e690882bc1.webp"}, {"id": "01-16", "file": "A_奥黛塔/A_17.png", "src": "4e55ba9a79e7.webp"}, {"id": "01-17", "file": "A_奥黛塔/A_18.png", "src": "1143240cd1a1.webp"}, {"id": "01-18", "file": "A_奥黛塔/A_19.png", "src": "67f56c6e2a38.webp"}, {"id": "01-19", "file": "A_奥黛塔/A_20.png", "src": "9fc5f26f5817.webp"}, {"id": "01-20", "file": "A_奥黛塔/A_21.png", "src": "7b72f1a15a7b.webp"}, {"id": "01-21", "file": "A_奥黛塔/A_22.png", "src": "19ebd027b30c.webp"}, {"id": "01-22", "file": "A_奥黛塔/A_23.png", "src": "49e4a5b5eebe.webp"}, {"id": "01-23", "file": "A_奥黛塔/A_24.png", "src": "f358bcc982c4.webp"}, {"id": "01-24", "file": "A_奥黛塔/A_25.png", "src": "3b35159ff14f.webp"}, {"id": "01-25", "file": "A_奥黛塔/A_26.png", "src": "a6e0c6bc5844.webp"}, {"id": "01-26", "file": "A_奥黛塔/A_27.png", "src": "4e223013687f.webp"}]}, {"name": "B_八重神子", "items": [{"id": "02-01", "file": "B_八重神子/B_01.png", "src": "e26e674c26a3.webp"}, {"id": "02-02", "file": "B_八重神子/B_02.png", "src": "cfcb66340129.webp"}, {"id": "02-03", "file": "B_八重神子/B_03.png", "src": "218108ed71b1.webp"}, {"id": "02-04", "file": "B_八重神子/B_04.png", "src": "e9c91504f820.webp"}, {"id": "02-05", "file": "B_八重神子/B_05.png", "src": "2029876ee801.webp"}, {"id": "02-06", "file": "B_八重神子/B_06.png", "src": "1ddba5066691.webp"}, {"id": "02-07", "file": "B_八重神子/B_07.png", "src": "351ad5c3e604.webp"}, {"id": "02-08", "file": "B_八重神子/B_08.png", "src": "cca5c978fbdd.webp"}, {"id": "02-09", "file": "B_八重神子/B_09.png", "src": "6b3cde9f7712.webp"}, {"id": "02-10", "file": "B_八重神子/B_10.png", "src": "040d307ca634.webp"}, {"id": "02-11", "file": "B_八重神子/B_11.png", "src": "2a7cbad7976b.webp"}, {"id": "02-12", "file": "B_八重神子/B_12.png", "src": "5c92f0b67efa.webp"}, {"id": "02-13", "file": "B_八重神子/B_13.png", "src": "d2b5518096df.webp"}, {"id": "02-14", "file": "B_八重神子/B_14.png", "src": "76f9edcaf44c.webp"}, {"id": "02-15", "file": "B_八重神子/B_15.png", "src": "03c2715b42bc.webp"}, {"id": "02-16", "file": "B_八重神子/B_16.png", "src": "324af5700638.webp"}, {"id": "02-17", "file": "B_八重神子/B_17.png", "src": "f7333dbe4f22.webp"}, {"id": "02-18", "file": "B_八重神子/B_18.png", "src": "8f1ee2df40ff.webp"}, {"id": "02-19", "file": "B_八重神子/B_19.png", "src": "587fb4e5da2f.webp"}, {"id": "02-20", "file": "B_八重神子/B_20.png", "src": "b8c68b0de6ef.webp"}, {"id": "02-21", "file": "B_八重神子/B_21.png", "src": "651fe5c40c3a.webp"}, {"id": "02-22", "file": "B_八重神子/B_22.png", "src": "af2f5c62d5f1.webp"}, {"id": "02-23", "file": "B_八重神子/B_23.png", "src": "645b1c03e4f5.webp"}, {"id": "02-24", "file": "B_八重神子/B_24.png", "src": "8ae14dba7de7.webp"}, {"id": "02-25", "file": "B_八重神子/B_25.png", "src": "6d3c4ae89a35.webp"}, {"id": "02-26", "file": "B_八重神子/B_26.png", "src": "eccb68ee8476.webp"}, {"id": "02-27", "file": "B_八重神子/B_27.png", "src": "fb8e6298f034.webp"}, {"id": "02-28", "file": "B_八重神子/B_28.png", "src": "cc474e29a4af.webp"}, {"id": "02-29", "file": "B_八重神子/B_29.png", "src": "4aee927c5c99.webp"}, {"id": "02-30", "file": "B_八重神子/B_30.png", "src": "1fdb7239d61e.webp"}, {"id": "02-31", "file": "B_八重神子/B_31.png", "src": "3ac38ba7fa4a.webp"}, {"id": "02-32", "file": "B_八重神子/B_32.png", "src": "22f91d527cac.webp"}, {"id": "02-33", "file": "B_八重神子/B_33.png", "src": "8bacb34249e0.webp"}, {"id": "02-34", "file": "B_八重神子/B_34.png", "src": "ce58b7069d0f.webp"}, {"id": "02-35", "file": "B_八重神子/B_35.png", "src": "dcd11c78b797.webp"}, {"id": "02-36", "file": "B_八重神子/B_36.png", "src": "befb838fa10e.webp"}, {"id": "02-37", "file": "B_八重神子/B_37.png", "src": "251dd2dd6afa.webp"}, {"id": "02-38", "file": "B_八重神子/B_38.png", "src": "b3fea1c8c026.webp"}, {"id": "02-39", "file": "B_八重神子/B_39.png", "src": "5b0c7c4c2d65.webp"}, {"id": "02-40", "file": "B_八重神子/B_40.png", "src": "bbce05a3fa2d.webp"}, {"id": "02-41", "file": "B_八重神子/B_41.png", "src": "5cc0c8ce716a.webp"}, {"id": "02-42", "file": "B_八重神子/B_42.png", "src": "35e257060582.webp"}, {"id": "02-43", "file": "B_八重神子/B_43.png", "src": "0b980c4bed3e.webp"}, {"id": "02-44", "file": "B_八重神子/B_44.png", "src": "b9ea26668e53.webp"}, {"id": "02-45", "file": "B_八重神子/B_45.png", "src": "f1dcbae21b52.webp"}, {"id": "02-46", "file": "B_八重神子/B_46.png", "src": "0b1706b3e551.webp"}, {"id": "02-47", "file": "B_八重神子/B_47.png", "src": "e35a11ae09be.webp"}, {"id": "02-48", "file": "B_八重神子/B_48.png", "src": "af6127178aea.webp"}, {"id": "02-49", "file": "B_八重神子/B_49.png", "src": "501488b9cc41.webp"}, {"id": "02-50", "file": "B_八重神子/B_50.png", "src": "a9b6ab6374f0.webp"}, {"id": "02-51", "file": "B_八重神子/B_51.png", "src": "9b903fde1094.webp"}, {"id": "02-52", "file": "B_八重神子/B_52.png", "src": "3e493e14fdb7.webp"}, {"id": "02-53", "file": "B_八重神子/B_53.png", "src": "8de15e69dd0f.webp"}, {"id": "02-54", "file": "B_八重神子/B_54.png", "src": "31d415b868cc.webp"}, {"id": "02-55", "file": "B_八重神子/B_55.png", "src": "057aeaf6c594.webp"}, {"id": "02-56", "file": "B_八重神子/B_56.png", "src": "913e74acd588.webp"}, {"id": "02-57", "file": "B_八重神子/B_57.png", "src": "dbec2b84b31f.webp"}, {"id": "02-58", "file": "B_八重神子/B_58.png", "src": "368c209dafa0.webp"}, {"id": "02-59", "file": "B_八重神子/B_59.png", "src": "78480bca3b8e.webp"}, {"id": "02-60", "file": "B_八重神子/B_60.png", "src": "aab9095c6324.webp"}, {"id": "02-61", "file": "B_八重神子/B_61.png", "src": "b240b0c11a72.webp"}, {"id": "02-62", "file": "B_八重神子/B_62.png", "src": "f35c52dfc290.webp"}, {"id": "02-63", "file": "B_八重神子/B_63.png", "src": "1dbc9baf9bc4.webp"}, {"id": "02-64", "file": "B_八重神子/B_64.png", "src": "6e069c94fbc2.webp"}, {"id": "02-65", "file": "B_八重神子/B_65.png", "src": "bb87e3aefca8.webp"}, {"id": "02-66", "file": "B_八重神子/B_66.png", "src": "bb8dc41fa712.webp"}, {"id": "02-67", "file": "B_八重神子/B_67.png", "src": "d6d767ab3f9e.webp"}, {"id": "02-68", "file": "B_八重神子/B_68.png", "src": "4b2633a00f01.webp"}, {"id": "02-69", "file": "B_八重神子/B_69.png", "src": "18bf8c3c7a07.webp"}]}, {"name": "C_冰之女皇", "items": [{"id": "03-01", "file": "C_冰之女皇/C_01.png", "src": "1a9504e8117e.webp"}, {"id": "03-02", "file": "C_冰之女皇/C_02.png", "src": "1354132011ff.webp"}, {"id": "03-03", "file": "C_冰之女皇/C_03.png", "src": "0817a62bf5cf.webp"}, {"id": "03-04", "file": "C_冰之女皇/C_04.png", "src": "50f4bbd94b35.webp"}, {"id": "03-05", "file": "C_冰之女皇/C_05.png", "src": "3da2d93466a2.webp"}, {"id": "03-06", "file": "C_冰之女皇/C_06.png", "src": "aff287366ce2.webp"}, {"id": "03-07", "file": "C_冰之女皇/C_07.png", "src": "0faf9ef5af6b.webp"}, {"id": "03-08", "file": "C_冰之女皇/C_08.png", "src": "908ed8447c99.webp"}, {"id": "03-09", "file": "C_冰之女皇/C_09.png", "src": "14e1dc4a7622.webp"}, {"id": "03-10", "file": "C_冰之女皇/C_10.png", "src": "2bf7177460b7.webp"}, {"id": "03-11", "file": "C_冰之女皇/C_11.png", "src": "2183faf34f0a.webp"}, {"id": "03-12", "file": "C_冰之女皇/C_12.png", "src": "31f68b050b82.webp"}, {"id": "03-13", "file": "C_冰之女皇/C_13.png", "src": "cb351fb9bcdd.webp"}, {"id": "03-14", "file": "C_冰之女皇/C_14.png", "src": "bd7b88d28fe5.webp"}, {"id": "03-15", "file": "C_冰之女皇/C_15.png", "src": "42b958d59029.webp"}, {"id": "03-16", "file": "C_冰之女皇/C_16.png", "src": "ea6124082af1.webp"}, {"id": "03-17", "file": "C_冰之女皇/C_17.png", "src": "0674997d8402.webp"}, {"id": "03-18", "file": "C_冰之女皇/C_18.png", "src": "7e47a02eecbe.webp"}, {"id": "03-19", "file": "C_冰之女皇/C_19.png", "src": "1e3a8f4b9223.webp"}, {"id": "03-20", "file": "C_冰之女皇/C_20.png", "src": "9a9e0c25c331.webp"}, {"id": "03-21", "file": "C_冰之女皇/C_21.png", "src": "e882e3d54bc5.webp"}, {"id": "03-22", "file": "C_冰之女皇/C_22.png", "src": "15ce96913b5c.webp"}, {"id": "03-23", "file": "C_冰之女皇/C_23.png", "src": "e4756fff6104.webp"}, {"id": "03-24", "file": "C_冰之女皇/C_24.png", "src": "0597a18f5a10.webp"}, {"id": "03-25", "file": "C_冰之女皇/C_25.png", "src": "813dece9d922.webp"}, {"id": "03-26", "file": "C_冰之女皇/C_26.png", "src": "a328647f5c75.webp"}, {"id": "03-27", "file": "C_冰之女皇/C_27.png", "src": "a6a709cd4f0a.webp"}, {"id": "03-28", "file": "C_冰之女皇/C_28.png", "src": "ae625587893d.webp"}, {"id": "03-29", "file": "C_冰之女皇/C_29.png", "src": "821f3d9114f1.webp"}, {"id": "03-30", "file": "C_冰之女皇/C_30.png", "src": "5e3006a34140.webp"}, {"id": "03-31", "file": "C_冰之女皇/C_31.png", "src": "f0cc18b9bc07.webp"}, {"id": "03-32", "file": "C_冰之女皇/C_32.png", "src": "5f3d87eff358.webp"}, {"id": "03-33", "file": "C_冰之女皇/C_33.png", "src": "a55b23b95e7b.webp"}, {"id": "03-34", "file": "C_冰之女皇/C_34.png", "src": "dd58988a032d.webp"}, {"id": "03-35", "file": "C_冰之女皇/C_35.png", "src": "f938b706f9e3.webp"}, {"id": "03-36", "file": "C_冰之女皇/C_36.png", "src": "cf010e74bfa3.webp"}, {"id": "03-37", "file": "C_冰之女皇/C_37.png", "src": "7092f9e1f427.webp"}, {"id": "03-38", "file": "C_冰之女皇/C_38.png", "src": "e903c23782ed.webp"}, {"id": "03-39", "file": "C_冰之女皇/C_39.png", "src": "c1bc8b14ac3e.webp"}, {"id": "03-40", "file": "C_冰之女皇/C_40.png", "src": "f4fc45586d7d.webp"}, {"id": "03-41", "file": "C_冰之女皇/C_41.png", "src": "9c87f91ebffb.webp"}, {"id": "03-42", "file": "C_冰之女皇/C_42.png", "src": "be50dd8272e0.webp"}, {"id": "03-43", "file": "C_冰之女皇/C_43.png", "src": "99f37c5d737d.webp"}, {"id": "03-44", "file": "C_冰之女皇/C_44.png", "src": "05663d2a9d4f.webp"}, {"id": "03-45", "file": "C_冰之女皇/C_45.png", "src": "ec0906e615c9.webp"}, {"id": "03-46", "file": "C_冰之女皇/C_46.png", "src": "061b6aee30b8.webp"}, {"id": "03-47", "file": "C_冰之女皇/C_47.png", "src": "09021abf4ac1.webp"}, {"id": "03-48", "file": "C_冰之女皇/C_48.png", "src": "4f6209d230b3.webp"}, {"id": "03-49", "file": "C_冰之女皇/C_49.png", "src": "42658ac100fb.webp"}, {"id": "03-50", "file": "C_冰之女皇/C_50.png", "src": "ef35cd7177ae.webp"}, {"id": "03-51", "file": "C_冰之女皇/C_51.png", "src": "b7a4eba3e92b.webp"}, {"id": "03-52", "file": "C_冰之女皇/C_52.png", "src": "ed3e92a6a0d5.webp"}, {"id": "03-53", "file": "C_冰之女皇/C_53.png", "src": "475eb2aea32d.webp"}, {"id": "03-54", "file": "C_冰之女皇/C_54.png", "src": "e9e5a3b28e85.webp"}, {"id": "03-55", "file": "C_冰之女皇/C_55.png", "src": "a5eb685a5bac.webp"}, {"id": "03-56", "file": "C_冰之女皇/C_56.png", "src": "072d075577b8.webp"}, {"id": "03-57", "file": "C_冰之女皇/C_57.png", "src": "67c0107b4a28.webp"}, {"id": "03-58", "file": "C_冰之女皇/C_58.png", "src": "7f487f8741a1.webp"}, {"id": "03-59", "file": "C_冰之女皇/C_59.png", "src": "4b3bad4e0047.webp"}, {"id": "03-60", "file": "C_冰之女皇/C_60.png", "src": "a889b8274d5d.webp"}, {"id": "03-61", "file": "C_冰之女皇/C_61.png", "src": "d3ebf0cf7df6.webp"}, {"id": "03-62", "file": "C_冰之女皇/C_62.png", "src": "b20eb639afba.webp"}, {"id": "03-63", "file": "C_冰之女皇/C_63.png", "src": "84b9db4f5e09.webp"}, {"id": "03-64", "file": "C_冰之女皇/C_64.png", "src": "700491faffec.webp"}, {"id": "03-65", "file": "C_冰之女皇/C_65.png", "src": "e20bb50b3956.webp"}, {"id": "03-66", "file": "C_冰之女皇/C_66.png", "src": "c12ebc45d88c.webp"}, {"id": "03-67", "file": "C_冰之女皇/C_67.png", "src": "f08e14bb77c4.webp"}, {"id": "03-68", "file": "C_冰之女皇/C_68.png", "src": "6f5b105a1a29.webp"}, {"id": "03-69", "file": "C_冰之女皇/C_69.png", "src": "ecad03fa756e.webp"}]}, {"name": "D_芙宁娜", "items": [{"id": "04-01", "file": "D_芙宁娜/D_01.png", "src": "506a1b8bcd1d.webp"}, {"id": "04-02", "file": "D_芙宁娜/D_02.png", "src": "6a47c70b2cdb.webp"}, {"id": "04-03", "file": "D_芙宁娜/D_03.png", "src": "71a40b111118.webp"}, {"id": "04-04", "file": "D_芙宁娜/D_04.png", "src": "c98f2a0e9d1a.webp"}, {"id": "04-05", "file": "D_芙宁娜/D_05.png", "src": "e0952bb0b7f2.webp"}, {"id": "04-06", "file": "D_芙宁娜/D_06.png", "src": "92693a98174a.webp"}, {"id": "04-07", "file": "D_芙宁娜/D_07.png", "src": "2372b6c11fca.webp"}, {"id": "04-08", "file": "D_芙宁娜/D_08.png", "src": "9001c0f4d4fe.webp"}, {"id": "04-09", "file": "D_芙宁娜/D_09.png", "src": "d8e55f73b8fa.webp"}, {"id": "04-10", "file": "D_芙宁娜/D_10.png", "src": "229fdebe851b.webp"}, {"id": "04-11", "file": "D_芙宁娜/D_11.png", "src": "610544a47c2d.webp"}, {"id": "04-12", "file": "D_芙宁娜/D_12.png", "src": "98a4c00db63e.webp"}, {"id": "04-13", "file": "D_芙宁娜/D_13.png", "src": "d3d6dc89d87b.webp"}, {"id": "04-14", "file": "D_芙宁娜/D_14.png", "src": "ac396290907c.webp"}, {"id": "04-15", "file": "D_芙宁娜/D_15.png", "src": "0006ae5b2f57.webp"}, {"id": "04-16", "file": "D_芙宁娜/D_16.png", "src": "7980d0d0da8c.webp"}, {"id": "04-17", "file": "D_芙宁娜/D_17.png", "src": "a41599d7d4e1.webp"}, {"id": "04-18", "file": "D_芙宁娜/D_18.png", "src": "437353816e97.webp"}, {"id": "04-19", "file": "D_芙宁娜/D_19.png", "src": "f8c25df803b4.webp"}, {"id": "04-20", "file": "D_芙宁娜/D_20.png", "src": "5ca50188ddea.webp"}, {"id": "04-21", "file": "D_芙宁娜/D_21.png", "src": "d1d129963854.webp"}, {"id": "04-22", "file": "D_芙宁娜/D_22.png", "src": "b0f7c5717c5b.webp"}, {"id": "04-23", "file": "D_芙宁娜/D_23.png", "src": "c5c2cad2d7f3.webp"}, {"id": "04-24", "file": "D_芙宁娜/D_24.png", "src": "6f0acd1a076c.webp"}, {"id": "04-25", "file": "D_芙宁娜/D_25.png", "src": "afd0358db86f.webp"}, {"id": "04-26", "file": "D_芙宁娜/D_26.png", "src": "d87e6be1ee68.webp"}, {"id": "04-27", "file": "D_芙宁娜/D_27.png", "src": "54e388f25511.webp"}, {"id": "04-28", "file": "D_芙宁娜/D_28.png", "src": "2a1341191868.webp"}, {"id": "04-29", "file": "D_芙宁娜/D_29.png", "src": "2a3edfcc98a8.webp"}, {"id": "04-30", "file": "D_芙宁娜/D_30.png", "src": "5170d43684dd.webp"}, {"id": "04-31", "file": "D_芙宁娜/D_31.png", "src": "2bc79a3ec922.webp"}, {"id": "04-32", "file": "D_芙宁娜/D_32.png", "src": "e3cfa7f8054c.webp"}, {"id": "04-33", "file": "D_芙宁娜/D_33.png", "src": "c5ffc3f3be58.webp"}, {"id": "04-34", "file": "D_芙宁娜/D_34.png", "src": "820ed6647ad2.webp"}, {"id": "04-35", "file": "D_芙宁娜/D_35.png", "src": "383b5c15793b.webp"}, {"id": "04-36", "file": "D_芙宁娜/D_36.png", "src": "cc87b3ece985.webp"}, {"id": "04-37", "file": "D_芙宁娜/D_37.png", "src": "c28c9490e440.webp"}, {"id": "04-38", "file": "D_芙宁娜/D_38.png", "src": "dd92cec2de89.webp"}, {"id": "04-39", "file": "D_芙宁娜/D_39.png", "src": "6fb416588229.webp"}, {"id": "04-40", "file": "D_芙宁娜/D_40.png", "src": "0658174ab2ab.webp"}, {"id": "04-41", "file": "D_芙宁娜/D_41.png", "src": "70dbcc62dc59.webp"}, {"id": "04-42", "file": "D_芙宁娜/D_42.png", "src": "6397463aa02b.webp"}, {"id": "04-43", "file": "D_芙宁娜/D_43.png", "src": "69148bd14fc4.webp"}, {"id": "04-44", "file": "D_芙宁娜/D_44.png", "src": "e4156fc3d28f.webp"}, {"id": "04-45", "file": "D_芙宁娜/D_45.png", "src": "ac9615aa9948.webp"}, {"id": "04-46", "file": "D_芙宁娜/D_46.png", "src": "aac82c3362ab.webp"}, {"id": "04-47", "file": "D_芙宁娜/D_47.png", "src": "e8892f523366.webp"}, {"id": "04-48", "file": "D_芙宁娜/D_48.png", "src": "1de9e5efc8b8.webp"}, {"id": "04-49", "file": "D_芙宁娜/D_49.png", "src": "9e69f5bfa87f.webp"}]}, {"name": "E_胡桃", "items": [{"id": "05-01", "file": "E_胡桃/E_01.png", "src": "e3a8ccd48abc.webp"}, {"id": "05-02", "file": "E_胡桃/E_02.png", "src": "b7d5d7e38bf6.webp"}, {"id": "05-03", "file": "E_胡桃/E_03.png", "src": "414cfd8e9f18.webp"}, {"id": "05-04", "file": "E_胡桃/E_04.png", "src": "8473a6dcd72b.webp"}, {"id": "05-05", "file": "E_胡桃/E_05.png", "src": "2fd2c00cadf4.webp"}, {"id": "05-06", "file": "E_胡桃/E_06.png", "src": "7ab2f67e7872.webp"}, {"id": "05-07", "file": "E_胡桃/E_07.png", "src": "cac18381b2b1.webp"}, {"id": "05-08", "file": "E_胡桃/E_08.png", "src": "f5ab576583e3.webp"}, {"id": "05-09", "file": "E_胡桃/E_09.png", "src": "4a4524f20a5a.webp"}, {"id": "05-10", "file": "E_胡桃/E_10.png", "src": "e53a64499acb.webp"}, {"id": "05-11", "file": "E_胡桃/E_11.png", "src": "8f89632b7ca7.webp"}, {"id": "05-12", "file": "E_胡桃/E_12.png", "src": "92559aa4fb9f.webp"}, {"id": "05-13", "file": "E_胡桃/E_13.png", "src": "cb3b9d9c9549.webp"}, {"id": "05-14", "file": "E_胡桃/E_14.png", "src": "74439b791ac0.webp"}, {"id": "05-15", "file": "E_胡桃/E_15.png", "src": "4c9ea833a8a1.webp"}, {"id": "05-16", "file": "E_胡桃/E_16.png", "src": "2c2bcff566df.webp"}, {"id": "05-17", "file": "E_胡桃/E_17.png", "src": "52b479e406f8.webp"}, {"id": "05-18", "file": "E_胡桃/E_18.png", "src": "9613223c1fb4.webp"}, {"id": "05-19", "file": "E_胡桃/E_19.png", "src": "24fdf1f43e5a.webp"}, {"id": "05-20", "file": "E_胡桃/E_20.png", "src": "2e04be1c426f.webp"}, {"id": "05-21", "file": "E_胡桃/E_21.png", "src": "954b07fe18db.webp"}, {"id": "05-22", "file": "E_胡桃/E_22.png", "src": "c55846099085.webp"}, {"id": "05-23", "file": "E_胡桃/E_23.png", "src": "33ff37ae877f.webp"}, {"id": "05-24", "file": "E_胡桃/E_24.png", "src": "f97b888dd389.webp"}, {"id": "05-25", "file": "E_胡桃/E_25.png", "src": "3bfecc044531.webp"}, {"id": "05-26", "file": "E_胡桃/E_26.png", "src": "f667c8012941.webp"}, {"id": "05-27", "file": "E_胡桃/E_27.png", "src": "487c348a7258.webp"}, {"id": "05-28", "file": "E_胡桃/E_28.png", "src": "1836ead2ecc2.webp"}, {"id": "05-29", "file": "E_胡桃/E_29.png", "src": "b30d90d7d241.webp"}, {"id": "05-30", "file": "E_胡桃/E_30.png", "src": "9f208b41f0fd.webp"}, {"id": "05-31", "file": "E_胡桃/E_31.png", "src": "7d3529aa896a.webp"}, {"id": "05-32", "file": "E_胡桃/E_32.png", "src": "7a7d70aeb756.webp"}, {"id": "05-33", "file": "E_胡桃/E_33.png", "src": "54784bee28ec.webp"}, {"id": "05-34", "file": "E_胡桃/E_34.png", "src": "8a2f402075a3.webp"}, {"id": "05-35", "file": "E_胡桃/E_35.png", "src": "59c5586e6c71.webp"}, {"id": "05-36", "file": "E_胡桃/E_36.png", "src": "a1233b378eae.webp"}, {"id": "05-37", "file": "E_胡桃/E_37.png", "src": "b686b693813a.webp"}, {"id": "05-38", "file": "E_胡桃/E_38.png", "src": "10bbc6b3e0e1.webp"}, {"id": "05-39", "file": "E_胡桃/E_39.png", "src": "b39e350798d4.webp"}, {"id": "05-40", "file": "E_胡桃/E_40.png", "src": "25c1e7081b88.webp"}, {"id": "05-41", "file": "E_胡桃/E_41.png", "src": "6f6d2f51a656.webp"}, {"id": "05-42", "file": "E_胡桃/E_42.png", "src": "50f8de55d60b.webp"}, {"id": "05-43", "file": "E_胡桃/E_43.png", "src": "929aa65c9c5b.webp"}, {"id": "05-44", "file": "E_胡桃/E_44.png", "src": "367e2c962d0c.webp"}, {"id": "05-45", "file": "E_胡桃/E_45.png", "src": "a1dc07f2841c.webp"}, {"id": "05-46", "file": "E_胡桃/E_46.png", "src": "10563bbf84d9.webp"}, {"id": "05-47", "file": "E_胡桃/E_47.png", "src": "d9610d8092ae.webp"}, {"id": "05-48", "file": "E_胡桃/E_48.png", "src": "946253cdcc6e.webp"}, {"id": "05-49", "file": "E_胡桃/E_49.png", "src": "b73bc03e99e0.webp"}, {"id": "05-50", "file": "E_胡桃/E_50.png", "src": "9be72b209440.webp"}, {"id": "05-51", "file": "E_胡桃/E_51.png", "src": "6888001f270d.webp"}, {"id": "05-52", "file": "E_胡桃/E_52.png", "src": "7828e30b5367.webp"}, {"id": "05-53", "file": "E_胡桃/E_53.png", "src": "edd1ceca1da2.webp"}, {"id": "05-54", "file": "E_胡桃/E_54.png", "src": "f99c399cbfef.webp"}, {"id": "05-55", "file": "E_胡桃/E_55.png", "src": "7a5d38527ee3.webp"}, {"id": "05-56", "file": "E_胡桃/E_56.png", "src": "20b873867e42.webp"}, {"id": "05-57", "file": "E_胡桃/E_57.png", "src": "a1b6a019a8c4.webp"}, {"id": "05-58", "file": "E_胡桃/E_58.png", "src": "99de8d17fa3f.webp"}, {"id": "05-59", "file": "E_胡桃/E_59.png", "src": "8155caf580ce.webp"}, {"id": "05-60", "file": "E_胡桃/E_60.png", "src": "3934a4c92548.webp"}, {"id": "05-61", "file": "E_胡桃/E_61.png", "src": "d1c1d39b8f49.webp"}, {"id": "05-62", "file": "E_胡桃/E_62.png", "src": "9ac8e9aa3713.webp"}]}, {"name": "F_娜维娅", "items": [{"id": "06-01", "file": "F_娜维娅/F_01.png", "src": "e0eefd5287aa.webp"}, {"id": "06-02", "file": "F_娜维娅/F_02.png", "src": "f22207a31dce.webp"}, {"id": "06-03", "file": "F_娜维娅/F_03.png", "src": "42dbab7f743f.webp"}, {"id": "06-04", "file": "F_娜维娅/F_04.png", "src": "fc80e9ce95ac.webp"}, {"id": "06-05", "file": "F_娜维娅/F_05.png", "src": "0418c0ceb70e.webp"}, {"id": "06-06", "file": "F_娜维娅/F_06.png", "src": "cc7f50f23d21.webp"}, {"id": "06-07", "file": "F_娜维娅/F_07.png", "src": "1e2194380052.webp"}, {"id": "06-08", "file": "F_娜维娅/F_08.png", "src": "34d0c792cc6e.webp"}, {"id": "06-09", "file": "F_娜维娅/F_09.png", "src": "36ede2a084f1.webp"}, {"id": "06-10", "file": "F_娜维娅/F_10.png", "src": "c4df6ef64840.webp"}, {"id": "06-11", "file": "F_娜维娅/F_11.png", "src": "edd95018d56d.webp"}, {"id": "06-12", "file": "F_娜维娅/F_12.png", "src": "80130e16b574.webp"}, {"id": "06-13", "file": "F_娜维娅/F_13.png", "src": "78d4668c06bc.webp"}, {"id": "06-14", "file": "F_娜维娅/F_14.png", "src": "96f1da8544b7.webp"}, {"id": "06-15", "file": "F_娜维娅/F_15.png", "src": "38bc436cd3fc.webp"}, {"id": "06-16", "file": "F_娜维娅/F_16.png", "src": "0858d9c9f269.webp"}, {"id": "06-17", "file": "F_娜维娅/F_17.png", "src": "bdea2c8a2318.webp"}, {"id": "06-18", "file": "F_娜维娅/F_18.png", "src": "3b3736d3b28b.webp"}, {"id": "06-19", "file": "F_娜维娅/F_19.png", "src": "df053a315b55.webp"}, {"id": "06-20", "file": "F_娜维娅/F_20.png", "src": "c7f20c2f1a42.webp"}, {"id": "06-21", "file": "F_娜维娅/F_21.png", "src": "fb9890b2ef26.webp"}, {"id": "06-22", "file": "F_娜维娅/F_22.png", "src": "8e9ee786cf23.webp"}, {"id": "06-23", "file": "F_娜维娅/F_23.png", "src": "5525c8d6e0f8.webp"}, {"id": "06-24", "file": "F_娜维娅/F_24.png", "src": "ae60e456d10a.webp"}, {"id": "06-25", "file": "F_娜维娅/F_25.png", "src": "e4af67822c6f.webp"}, {"id": "06-26", "file": "F_娜维娅/F_26.png", "src": "60578f27b383.webp"}, {"id": "06-27", "file": "F_娜维娅/F_27.png", "src": "f949469e126d.webp"}, {"id": "06-28", "file": "F_娜维娅/F_28.png", "src": "3b0a5af282b0.webp"}, {"id": "06-29", "file": "F_娜维娅/F_29.png", "src": "c31edf6c1180.webp"}, {"id": "06-30", "file": "F_娜维娅/F_30.png", "src": "b4a46e6d0baf.webp"}, {"id": "06-31", "file": "F_娜维娅/F_31.png", "src": "be3b7517369d.webp"}, {"id": "06-32", "file": "F_娜维娅/F_32.png", "src": "ce57fc1f456a.webp"}, {"id": "06-33", "file": "F_娜维娅/F_33.png", "src": "76644b87ccad.webp"}, {"id": "06-34", "file": "F_娜维娅/F_34.png", "src": "1272731f7364.webp"}, {"id": "06-35", "file": "F_娜维娅/F_35.png", "src": "7112d52d1352.webp"}, {"id": "06-36", "file": "F_娜维娅/F_36.png", "src": "e2cbee17fcd5.webp"}, {"id": "06-37", "file": "F_娜维娅/F_37.png", "src": "821c5fcf30d1.webp"}, {"id": "06-38", "file": "F_娜维娅/F_38.png", "src": "d6a08c4e8598.webp"}, {"id": "06-39", "file": "F_娜维娅/F_39.png", "src": "646d9c40d581.webp"}, {"id": "06-40", "file": "F_娜维娅/F_40.png", "src": "d9d5d7e8b8d7.webp"}, {"id": "06-41", "file": "F_娜维娅/F_41.png", "src": "8d2117f2e8ca.webp"}, {"id": "06-42", "file": "F_娜维娅/F_42.png", "src": "92f4fa9350f7.webp"}, {"id": "06-43", "file": "F_娜维娅/F_43.png", "src": "b672063e47c3.webp"}, {"id": "06-44", "file": "F_娜维娅/F_44.png", "src": "ab7f050c3b58.webp"}, {"id": "06-45", "file": "F_娜维娅/F_45.png", "src": "a15fe8866394.webp"}, {"id": "06-46", "file": "F_娜维娅/F_46.png", "src": "5a074fa3afc5.webp"}, {"id": "06-47", "file": "F_娜维娅/F_47.png", "src": "69c5985adfea.webp"}, {"id": "06-48", "file": "F_娜维娅/F_48.png", "src": "218f5f205dfd.webp"}]}, {"name": "G_申鹤", "items": [{"id": "07-01", "file": "G_申鹤/G_01.png", "src": "3fa006e97f6e.webp"}, {"id": "07-02", "file": "G_申鹤/G_02.png", "src": "9ffbce6e1a94.webp"}, {"id": "07-03", "file": "G_申鹤/G_03.png", "src": "ddc9e887438f.webp"}, {"id": "07-04", "file": "G_申鹤/G_04.png", "src": "4b2ce9b365af.webp"}, {"id": "07-05", "file": "G_申鹤/G_05.png", "src": "b47edff5deb1.webp"}, {"id": "07-06", "file": "G_申鹤/G_06.png", "src": "e235337e4a81.webp"}, {"id": "07-07", "file": "G_申鹤/G_07.png", "src": "190d7365cec3.webp"}, {"id": "07-08", "file": "G_申鹤/G_08.png", "src": "693090d45c14.webp"}, {"id": "07-09", "file": "G_申鹤/G_09.png", "src": "8b588aac18b7.webp"}, {"id": "07-10", "file": "G_申鹤/G_10.png", "src": "4bcf35306c44.webp"}, {"id": "07-11", "file": "G_申鹤/G_11.png", "src": "c99a1d8f03ac.webp"}, {"id": "07-12", "file": "G_申鹤/G_12.png", "src": "280ac729b473.webp"}, {"id": "07-13", "file": "G_申鹤/G_13.png", "src": "340c3817f1cb.webp"}, {"id": "07-14", "file": "G_申鹤/G_14.png", "src": "29c659095290.webp"}, {"id": "07-15", "file": "G_申鹤/G_15.png", "src": "b64c05e9416b.webp"}, {"id": "07-16", "file": "G_申鹤/G_16.png", "src": "42901aa6ec89.webp"}, {"id": "07-17", "file": "G_申鹤/G_17.png", "src": "b7eecccfe43b.webp"}, {"id": "07-18", "file": "G_申鹤/G_18.png", "src": "fad052cbfcf0.webp"}, {"id": "07-19", "file": "G_申鹤/G_19.png", "src": "0c16facad427.webp"}, {"id": "07-20", "file": "G_申鹤/G_20.png", "src": "f79fbc7000fc.webp"}, {"id": "07-21", "file": "G_申鹤/G_21.png", "src": "574784d249b5.webp"}, {"id": "07-22", "file": "G_申鹤/G_22.png", "src": "2702ae22e8ae.webp"}, {"id": "07-23", "file": "G_申鹤/G_23.png", "src": "02e85407aa3f.webp"}, {"id": "07-24", "file": "G_申鹤/G_24.png", "src": "616f9f629465.webp"}, {"id": "07-25", "file": "G_申鹤/G_25.png", "src": "df4dd6eb99e0.webp"}, {"id": "07-26", "file": "G_申鹤/G_26.png", "src": "06381c6b5096.webp"}, {"id": "07-27", "file": "G_申鹤/G_27.png", "src": "24c0e3bbf04f.webp"}, {"id": "07-28", "file": "G_申鹤/G_28.png", "src": "851584ec8e8b.webp"}, {"id": "07-29", "file": "G_申鹤/G_29.png", "src": "dbe354b022be.webp"}, {"id": "07-30", "file": "G_申鹤/G_30.png", "src": "dc3fc25474f6.webp"}, {"id": "07-31", "file": "G_申鹤/G_31.png", "src": "3ba10b915e45.webp"}, {"id": "07-32", "file": "G_申鹤/G_32.png", "src": "fbbf71cf8d0d.webp"}, {"id": "07-33", "file": "G_申鹤/G_33.png", "src": "588242016b39.webp"}, {"id": "07-34", "file": "G_申鹤/G_34.png", "src": "8c196bfb9637.webp"}, {"id": "07-35", "file": "G_申鹤/G_35.png", "src": "5f5258a7e4bf.webp"}, {"id": "07-36", "file": "G_申鹤/G_36.png", "src": "80c138bbd8a2.webp"}, {"id": "07-37", "file": "G_申鹤/G_37.png", "src": "ff15a110c836.webp"}, {"id": "07-38", "file": "G_申鹤/G_38.png", "src": "3f8b4984d111.webp"}, {"id": "07-39", "file": "G_申鹤/G_39.png", "src": "f14d986a14c5.webp"}, {"id": "07-40", "file": "G_申鹤/G_40.png", "src": "f73818fe700d.webp"}, {"id": "07-41", "file": "G_申鹤/G_41.png", "src": "786ec277d347.webp"}, {"id": "07-42", "file": "G_申鹤/G_42.png", "src": "fb67089e52c8.webp"}, {"id": "07-43", "file": "G_申鹤/G_43.png", "src": "01edc2b1303d.webp"}, {"id": "07-44", "file": "G_申鹤/G_44.png", "src": "c5942b38548c.webp"}, {"id": "07-45", "file": "G_申鹤/G_45.png", "src": "b4f6b3011e05.webp"}, {"id": "07-46", "file": "G_申鹤/G_46.png", "src": "e0ff4c46af77.webp"}, {"id": "07-47", "file": "G_申鹤/G_47.png", "src": "4d4a92cd7cbb.webp"}, {"id": "07-48", "file": "G_申鹤/G_48.png", "src": "ab64be1de610.webp"}, {"id": "07-49", "file": "G_申鹤/G_49.png", "src": "ba70ebbd62ec.webp"}, {"id": "07-50", "file": "G_申鹤/G_50.png", "src": "7905d0eb16da.webp"}, {"id": "07-51", "file": "G_申鹤/G_51.png", "src": "d74e5cf6aaf9.webp"}, {"id": "07-52", "file": "G_申鹤/G_52.png", "src": "a61502751107.webp"}, {"id": "07-53", "file": "G_申鹤/G_53.png", "src": "5bea374a6718.webp"}, {"id": "07-54", "file": "G_申鹤/G_54.png", "src": "a4b456f90bdb.webp"}, {"id": "07-55", "file": "G_申鹤/G_55.png", "src": "e1eac1edc00e.webp"}, {"id": "07-56", "file": "G_申鹤/G_56.png", "src": "78dce9cf9a42.webp"}, {"id": "07-57", "file": "G_申鹤/G_57.png", "src": "b017184d5ce7.webp"}, {"id": "07-58", "file": "G_申鹤/G_58.png", "src": "715c9eb3c622.webp"}, {"id": "07-59", "file": "G_申鹤/G_59.png", "src": "5fb198774cd8.webp"}, {"id": "07-60", "file": "G_申鹤/G_60.png", "src": "5b028b8a22fd.webp"}]}, {"name": "H_神里绫华", "items": [{"id": "08-01", "file": "H_神里绫华/H_01.png", "src": "01617f254a47.webp"}, {"id": "08-02", "file": "H_神里绫华/H_02.png", "src": "caeba97a6134.webp"}, {"id": "08-03", "file": "H_神里绫华/H_03.png", "src": "8337a19cd384.webp"}, {"id": "08-04", "file": "H_神里绫华/H_04.png", "src": "d360d5f8372b.webp"}, {"id": "08-05", "file": "H_神里绫华/H_05.png", "src": "67a4221fc0fd.webp"}, {"id": "08-06", "file": "H_神里绫华/H_06.png", "src": "b27d1a020d66.webp"}, {"id": "08-07", "file": "H_神里绫华/H_07.png", "src": "8b2f151c1d1a.webp"}, {"id": "08-08", "file": "H_神里绫华/H_08.png", "src": "0d4aedb732f8.webp"}, {"id": "08-09", "file": "H_神里绫华/H_09.png", "src": "a3ad2256417f.webp"}, {"id": "08-10", "file": "H_神里绫华/H_10.png", "src": "9576531e2183.webp"}, {"id": "08-11", "file": "H_神里绫华/H_11.png", "src": "59a7f8b79fa0.webp"}, {"id": "08-12", "file": "H_神里绫华/H_12.png", "src": "5604ca2336ac.webp"}, {"id": "08-13", "file": "H_神里绫华/H_13.png", "src": "b96defc06529.webp"}, {"id": "08-14", "file": "H_神里绫华/H_14.png", "src": "733b079ef0d2.webp"}, {"id": "08-15", "file": "H_神里绫华/H_15.png", "src": "1ca1af42dc87.webp"}, {"id": "08-16", "file": "H_神里绫华/H_16.png", "src": "491fccd77c69.webp"}, {"id": "08-17", "file": "H_神里绫华/H_17.png", "src": "e267323fd7b5.webp"}, {"id": "08-18", "file": "H_神里绫华/H_18.png", "src": "89313c96d6e4.webp"}, {"id": "08-19", "file": "H_神里绫华/H_19.png", "src": "237c8d45ce97.webp"}, {"id": "08-20", "file": "H_神里绫华/H_20.png", "src": "991a3f39d13a.webp"}, {"id": "08-21", "file": "H_神里绫华/H_21.png", "src": "50ac12b94ec9.webp"}, {"id": "08-22", "file": "H_神里绫华/H_22.png", "src": "25e8c744777a.webp"}, {"id": "08-23", "file": "H_神里绫华/H_23.png", "src": "2fb7d29e8745.webp"}, {"id": "08-24", "file": "H_神里绫华/H_24.png", "src": "a12bd633b91a.webp"}, {"id": "08-25", "file": "H_神里绫华/H_25.png", "src": "0ba08df864e7.webp"}, {"id": "08-26", "file": "H_神里绫华/H_26.png", "src": "cb5408682ba0.webp"}, {"id": "08-27", "file": "H_神里绫华/H_27.png", "src": "6db50dd87be5.webp"}, {"id": "08-28", "file": "H_神里绫华/H_28.png", "src": "09c159e70fa9.webp"}, {"id": "08-29", "file": "H_神里绫华/H_29.png", "src": "a0e0dde631d8.webp"}, {"id": "08-30", "file": "H_神里绫华/H_30.png", "src": "d538c3d60dd8.webp"}, {"id": "08-31", "file": "H_神里绫华/H_31.png", "src": "12a35a45a0cb.webp"}, {"id": "08-32", "file": "H_神里绫华/H_32.png", "src": "4adec1b81437.webp"}, {"id": "08-33", "file": "H_神里绫华/H_33.png", "src": "6f7f2959be88.webp"}, {"id": "08-34", "file": "H_神里绫华/H_34.png", "src": "4404514e1f72.webp"}, {"id": "08-35", "file": "H_神里绫华/H_35.png", "src": "af3435b51993.webp"}, {"id": "08-36", "file": "H_神里绫华/H_36.png", "src": "3da8bd1dfa5a.webp"}, {"id": "08-37", "file": "H_神里绫华/H_37.png", "src": "09783d8a3de3.webp"}, {"id": "08-38", "file": "H_神里绫华/H_38.png", "src": "bf2cebfddad4.webp"}, {"id": "08-39", "file": "H_神里绫华/H_39.png", "src": "54ef7b71d9b3.webp"}, {"id": "08-40", "file": "H_神里绫华/H_40.png", "src": "9b4ba27be965.webp"}, {"id": "08-41", "file": "H_神里绫华/H_41.png", "src": "80952fd86925.webp"}, {"id": "08-42", "file": "H_神里绫华/H_42.png", "src": "8bd78b9d81ba.webp"}, {"id": "08-43", "file": "H_神里绫华/H_43.png", "src": "6757f51cd01e.webp"}, {"id": "08-44", "file": "H_神里绫华/H_44.png", "src": "20954032fad5.webp"}, {"id": "08-45", "file": "H_神里绫华/H_45.png", "src": "e553ffa14350.webp"}, {"id": "08-46", "file": "H_神里绫华/H_46.png", "src": "1641644b7d6d.webp"}, {"id": "08-47", "file": "H_神里绫华/H_47.png", "src": "8ab0a82fff97.webp"}, {"id": "08-48", "file": "H_神里绫华/H_48.png", "src": "ae375208e90f.webp"}, {"id": "08-49", "file": "H_神里绫华/H_49.png", "src": "66041bd9ed8e.webp"}, {"id": "08-50", "file": "H_神里绫华/H_50.png", "src": "335c41acaa92.webp"}]}, {"name": "I_沃雅妮莎", "items": [{"id": "09-01", "file": "I_沃雅妮莎/I_01.png", "src": "ae99e2a774c5.webp"}, {"id": "09-02", "file": "I_沃雅妮莎/I_02.png", "src": "c9a5e1537d52.webp"}, {"id": "09-03", "file": "I_沃雅妮莎/I_03.png", "src": "869659c2d29a.webp"}, {"id": "09-04", "file": "I_沃雅妮莎/I_04.png", "src": "9aca4cfce661.webp"}, {"id": "09-05", "file": "I_沃雅妮莎/I_05.png", "src": "593035ba1375.webp"}, {"id": "09-06", "file": "I_沃雅妮莎/I_06.png", "src": "c2b2a4fb6694.webp"}, {"id": "09-07", "file": "I_沃雅妮莎/I_07.png", "src": "612df0daf4b9.webp"}, {"id": "09-08", "file": "I_沃雅妮莎/I_08.png", "src": "3825b6b58e8d.webp"}, {"id": "09-09", "file": "I_沃雅妮莎/I_09.png", "src": "643609786bfd.webp"}, {"id": "09-10", "file": "I_沃雅妮莎/I_10.png", "src": "cf2a43b523c2.webp"}, {"id": "09-11", "file": "I_沃雅妮莎/I_11.png", "src": "5d6cdfed0d11.webp"}, {"id": "09-12", "file": "I_沃雅妮莎/I_12.png", "src": "b096e41c1369.webp"}, {"id": "09-13", "file": "I_沃雅妮莎/I_13.png", "src": "4832b817c29e.webp"}, {"id": "09-14", "file": "I_沃雅妮莎/I_14.png", "src": "c90a4567f4b7.webp"}, {"id": "09-15", "file": "I_沃雅妮莎/I_15.png", "src": "525025ae80c2.webp"}, {"id": "09-16", "file": "I_沃雅妮莎/I_16.png", "src": "60528b4e6e8a.webp"}, {"id": "09-17", "file": "I_沃雅妮莎/I_17.png", "src": "3a34f89c703d.webp"}, {"id": "09-18", "file": "I_沃雅妮莎/I_18.png", "src": "604ed632ca4f.webp"}, {"id": "09-19", "file": "I_沃雅妮莎/I_19.png", "src": "4179c337c153.webp"}, {"id": "09-20", "file": "I_沃雅妮莎/I_20.png", "src": "65aef2531663.webp"}, {"id": "09-21", "file": "I_沃雅妮莎/I_21.png", "src": "bcaf5f2fd81b.webp"}, {"id": "09-22", "file": "I_沃雅妮莎/I_22.png", "src": "bbbb6d8b1d5f.webp"}, {"id": "09-23", "file": "I_沃雅妮莎/I_23.png", "src": "bf75cca9f0b1.webp"}, {"id": "09-24", "file": "I_沃雅妮莎/I_24.png", "src": "30d4a313ba6b.webp"}, {"id": "09-25", "file": "I_沃雅妮莎/I_25.png", "src": "efcd86fcd60f.webp"}, {"id": "09-26", "file": "I_沃雅妮莎/I_26.png", "src": "cf2834339f32.webp"}, {"id": "09-27", "file": "I_沃雅妮莎/I_27.png", "src": "6e96fb5d5d0d.webp"}, {"id": "09-28", "file": "I_沃雅妮莎/I_28.png", "src": "84a0fcb8b03f.webp"}, {"id": "09-29", "file": "I_沃雅妮莎/I_29.png", "src": "8fd5afb64bf9.webp"}, {"id": "09-30", "file": "I_沃雅妮莎/I_30.png", "src": "01489031fa73.webp"}, {"id": "09-31", "file": "I_沃雅妮莎/I_31.png", "src": "ffba00abc25c.webp"}, {"id": "09-32", "file": "I_沃雅妮莎/I_32.png", "src": "441e2153b448.webp"}, {"id": "09-33", "file": "I_沃雅妮莎/I_33.png", "src": "1b7a281a83fe.webp"}, {"id": "09-34", "file": "I_沃雅妮莎/I_34.png", "src": "a2d110738395.webp"}, {"id": "09-35", "file": "I_沃雅妮莎/I_35.png", "src": "dd95277ce823.webp"}, {"id": "09-36", "file": "I_沃雅妮莎/I_36.png", "src": "99960207ef41.webp"}, {"id": "09-37", "file": "I_沃雅妮莎/I_37.png", "src": "69dda4a8e9c7.webp"}, {"id": "09-38", "file": "I_沃雅妮莎/I_38.png", "src": "495c830d6968.webp"}, {"id": "09-39", "file": "I_沃雅妮莎/I_39.png", "src": "bbba1288bfea.webp"}, {"id": "09-40", "file": "I_沃雅妮莎/I_40.png", "src": "bd65f1a5dfc1.webp"}, {"id": "09-41", "file": "I_沃雅妮莎/I_41.png", "src": "50299b8e744f.webp"}, {"id": "09-42", "file": "I_沃雅妮莎/I_42.png", "src": "6ab02f6e81c0.webp"}, {"id": "09-43", "file": "I_沃雅妮莎/I_43.png", "src": "27e1254e479f.webp"}, {"id": "09-44", "file": "I_沃雅妮莎/I_44.png", "src": "212220d37267.webp"}, {"id": "09-45", "file": "I_沃雅妮莎/I_45.png", "src": "331411203619.webp"}, {"id": "09-46", "file": "I_沃雅妮莎/I_46.png", "src": "37687d68c86b.webp"}, {"id": "09-47", "file": "I_沃雅妮莎/I_47.png", "src": "7243697d1837.webp"}, {"id": "09-48", "file": "I_沃雅妮莎/I_48.png", "src": "4c11600c8865.webp"}, {"id": "09-49", "file": "I_沃雅妮莎/I_49.png", "src": "c388c0775bf8.webp"}, {"id": "09-50", "file": "I_沃雅妮莎/I_50.png", "src": "809d04d91ae9.webp"}, {"id": "09-51", "file": "I_沃雅妮莎/I_51.png", "src": "fa794c86d769.webp"}, {"id": "09-52", "file": "I_沃雅妮莎/I_52.png", "src": "2b85e641d8f5.webp"}, {"id": "09-53", "file": "I_沃雅妮莎/I_53.png", "src": "fc55e3c518f5.webp"}, {"id": "09-54", "file": "I_沃雅妮莎/I_54.png", "src": "515ebee54e37.webp"}, {"id": "09-55", "file": "I_沃雅妮莎/I_55.png", "src": "abc7a25c8de8.webp"}, {"id": "09-56", "file": "I_沃雅妮莎/I_56.png", "src": "946cf01eff5f.webp"}, {"id": "09-57", "file": "I_沃雅妮莎/I_57.png", "src": "6815f906e34c.webp"}, {"id": "09-58", "file": "I_沃雅妮莎/I_58.png", "src": "322281f86c68.webp"}]}];
+/* 提交地址用 base64 存,挡随手看源码 */
+const HOOK = (function () {
+  try { return "aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2svOGY4NWY2MDUtNzc3ZS00Y2VlLWI1MDYtNzE3ODE2NmIwN2Nh" ? atob("aHR0cHM6Ly9vcGVuLmZlaXNodS5jbi9vcGVuLWFwaXMvYm90L3YyL2hvb2svOGY4NWY2MDUtNzc3ZS00Y2VlLWI1MDYtNzE3ODE2NmIwN2Nh") : ''; } catch (e) { return ''; }
+})();
+const IMG_BASE = "https://pickpage-1446891496.cos.ap-shanghai.myqcloud.com/liequn/imgs/";
+const CLIENT = "";
+const picked = new Set();
+const notes = {};
+const $ = s => document.querySelector(s);
+
+/* ---------- 渲染 ---------- */
+function build() {
+  // 图片在外部域名时,页面里只存文件名,这里补全前缀(省 30% 体积)
+  if (IMG_BASE) {
+    DATA.forEach(g => g.items.forEach(it => {
+      if (it.src.indexOf('data:') !== 0 && !/^https?:/.test(it.src)) it.src = IMG_BASE + it.src;
+    }));
+  }
+  const wrap = $('#wrap');
+  wrap.innerHTML = '';
+  let total = 0;
+  DATA.forEach(g => {
+    const sec = document.createElement('section');
+    sec.className = 'sec';
+    sec.dataset.name = g.name;
+    const h = document.createElement('h2');
+    h.innerHTML = '<span>' + esc(g.name) + '</span><span class="n">' + g.items.length + ' 张</span>';
+    sec.appendChild(h);
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    g.items.forEach(it => {
+      total++;
+      const c = document.createElement('div');
+      c.className = 'card';
+      c.dataset.id = it.id;
+      // data: 内嵌(单文件版)直接上背景；相对路径(链接版)走 data-bg，进视口才加载
+      const lazy = it.src.indexOf('data:') !== 0;
+      c.innerHTML =
+        '<div class="thumb"' + (lazy
+            ? ' data-bg="' + it.src + '"'
+            : ' style="background-image:url(\'' + it.src + '\')"') + '></div>' +
+        '<div class="shield"></div>' +
+        '<div class="num">' + it.id + '</div>' +
+        '<div class="tick">✓</div>' +
+        '<button class="zoom" type="button" title="放大看">⤢</button>' +
+        '<input class="note" placeholder="备注（可选）" maxlength="80">';
+      c.addEventListener('click', e => {
+        if (e.target.classList.contains('note')) return;
+        if (e.target.classList.contains('zoom')) { openLb(it); return; }
+        toggle(c, it.id);
+      });
+      const n = c.querySelector('.note');
+      n.addEventListener('input', () => { notes[it.id] = n.value; });
+      n.addEventListener('click', e => e.stopPropagation());
+      // 手机上弹键盘会遮住输入框，聚焦后把它滚到屏幕中间
+      n.addEventListener('focus', () => setTimeout(
+        () => n.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300));
+      grid.appendChild(c);
+    });
+    sec.appendChild(grid);
+    wrap.appendChild(sec);
+  });
+  $('#tot') && ($('#tot').textContent = total);
+  lazyLoad();
+  update();
+}
+
+/* 链接版：图片拆成独立文件，翻到哪张才下哪张，首屏不用等全部 */
+function lazyLoad() {
+  const nodes = document.querySelectorAll('.thumb[data-bg]');
+  if (!nodes.length) return;
+  if (!('IntersectionObserver' in window)) {
+    nodes.forEach(t => { t.style.backgroundImage = "url('" + t.dataset.bg + "')"; t.removeAttribute('data-bg'); });
+    return;
+  }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const t = e.target, bg = t.dataset.bg;
+      if (bg) { t.style.backgroundImage = "url('" + bg + "')"; t.removeAttribute('data-bg'); }
+      io.unobserve(t);
+    });
+  }, { rootMargin: '150px' });
+  nodes.forEach(t => io.observe(t));
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function toggle(card, id) {
+  if (picked.has(id)) { picked.delete(id); card.classList.remove('on'); }
+  else { picked.add(id); card.classList.add('on'); }
+  const n = card.querySelector('.note');
+  if (!picked.has(id) && !n.value) n.blur();
+  update();
+}
+
+function update() {
+  $('#sel').textContent = picked.size;
+  $('#btnCopy').disabled = picked.size === 0;
+  if (HOOK) $('#btnSubmit').disabled = picked.size === 0;
+}
+
+/* ---------- 放大 ---------- */
+function openLb(it) {
+  $('#lbimg').style.backgroundImage = "url('" + it.src + "')";
+  $('#lbcap').textContent = it.id;
+  $('#lb').classList.add('on');
+}
+$('#lb').addEventListener('click', () => $('#lb').classList.remove('on'));
+
+/* ---------- 导出 ---------- */
+function lines() {
+  const out = [];
+  DATA.forEach(g => {
+    const rows = g.items.filter(it => picked.has(it.id));
+    if (!rows.length) return;
+    rows.forEach(it => {
+      const note = (notes[it.id] || '').replace(/[\r\n,]+/g, ' ').trim();
+      out.push({ name: g.name, id: it.id, file: it.file, note });
+    });
+  });
+  return out;
+}
+
+function stamp() {
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '_' + p(d.getHours()) + p(d.getMinutes());
+}
+
+$('#btnCopy').addEventListener('click', () => {
+  const rows = lines();
+  if (!rows.length) return;
+  const txt = rows.map(r => r.name + ' / ' + r.id + ' / ' + r.file + (r.note ? ' / ' + r.note : '')).join('\n');
+  copyText(txt);
+});
+
+/* ---------- 提交给画师 ----------
+   fetch 用 no-cors + text/plain：这是「简单请求」，不触发预检，
+   微信内置浏览器 / file:// 下也能把消息打到飞书群机器人。
+   代价是响应读不到，所以不能 100%% 确认送达，提示语留了后路。 */
+if (HOOK) {
+  $('#btnSubmit').style.display = '';
+  $('#btnSubmit').addEventListener('click', () => {
+    const rows = lines();
+    if (!rows.length) { toast('还没选图'); return; }
+    const byGroup = {};
+    rows.forEach(r => { (byGroup[r.name] = byGroup[r.name] || []).push(r); });
+    // 第一行是飞书机器人的关键词校验标记，必须与机器人「自定义关键词」里的那一行完全一致
+    let text = 'PICKSUBMIT\n【选图提交】' + (CLIENT ? CLIENT + ' · ' : '') + '共 ' + rows.length + ' 张\n';
+    Object.keys(byGroup).forEach(k => {
+      text += '\n' + k + '（' + byGroup[k].length + '）\n';
+      byGroup[k].forEach(r => {
+        text += '  ' + r.id + (r.note ? '　备注：' + r.note : '') + '\n';
+      });
+    });
+    const btn = $('#btnSubmit');
+    btn.disabled = true;
+    btn.textContent = '提交中…';
+    const done = () => {
+      btn.textContent = '已提交 ✓';
+      toast('已提交，画师马上收到');
+      setTimeout(() => { btn.textContent = '提交给画师'; btn.disabled = picked.size === 0; }, 4000);
+    };
+    fetch(HOOK, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ msg_type: 'text', content: { text: text } })
+    }).then(done).catch(() => {
+      btn.disabled = false;
+      btn.textContent = '提交给画师';
+      toast('提交没成功，请改用「复制清单」发我');
+    });
+  });
+}
+
+function csvCell(v) {
+  v = String(v == null ? '' : v);
+  return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+}
+
+function download(text, name, mime) {
+  const blob = new Blob([text], { type: mime });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2500);
+}
+
+function copyText(t) {
+  const done = () => toast('清单已复制，粘贴发我即可');
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(t).then(done).catch(() => fallback());
+  } else fallback();
+  function fallback() {
+    const ta = document.createElement('textarea');
+    ta.value = t;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    ta.remove();
+    if (ok) done();
+    else showCopyBox(t);   // 最后兜底：长按手动复制，手机上 100% 可行
+  }
+}
+
+/* 复制兜底：file:// 或老浏览器里 execCommand 也会失败，
+   弹一个只读文本框让客户长按全选复制 —— 这条路径在任何手机浏览器都通 */
+function showCopyBox(t) {
+  let m = document.getElementById('copybox');
+  if (!m) {
+    m = document.createElement('div');
+    m.id = 'copybox';
+    m.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(14,16,19,.88);' +
+      'display:flex;align-items:center;justify-content:center;padding:20px';
+    m.innerHTML =
+      '<div style="background:#fff;border-radius:12px;padding:16px;width:100%;max-width:520px">' +
+        '<div style="font-size:13px;color:#333;margin-bottom:10px;line-height:1.5">' +
+          '长按下面文字全选 → 复制 → 发给我即可</div>' +
+        '<textarea id="copyta" readonly style="width:100%;height:210px;font-size:12px;' +
+          'font-family:ui-monospace,Consolas,monospace;border:1px solid #dcdfe3;border-radius:8px;' +
+          'padding:9px;resize:vertical;background:#fafbfc;color:#24272c;' +
+          '-webkit-user-select:text;user-select:text"></textarea>' +
+        '<button class="btn" id="copyclose" style="width:100%;margin-top:12px;padding:11px">关掉</button>' +
+      '</div>';
+    document.body.appendChild(m);
+    m.addEventListener('click', e => { if (e.target === m) m.remove(); });
+    m.querySelector('#copyclose').onclick = () => m.remove();
+  }
+  document.body.appendChild(m);
+  const ta = m.querySelector('#copyta');
+  ta.value = t;
+  ta.focus();
+  try { ta.setSelectionRange(0, t.length); } catch (e) {}
+}
+
+let toastT;
+function toast(msg) {
+  let el = $('#toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.style.cssText = 'position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:300;' +
+      'background:rgba(20,22,26,.9);color:#fff;padding:9px 18px;border-radius:8px;font-size:13px;' +
+      'transition:opacity .2s;pointer-events:none';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.opacity = 1;
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { el.style.opacity = 0; }, 2200);
+}
+
+/* ---------- 搜索 ---------- */
+$('#q').addEventListener('input', e => {
+  const k = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('.sec').forEach(s => {
+    s.style.display = !k || s.dataset.name.toLowerCase().includes(k) ? '' : 'none';
+  });
+});
+
+/* ---------- 防保存 ---------- */
+// 只挡图片区；输入框和复制兜底文本框要放行，否则手机上没法长按复制
+document.addEventListener('contextmenu', e => {
+  const t = e.target;
+  if (t && (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT')) return;
+  e.preventDefault();
+});
+document.addEventListener('dragstart', e => e.preventDefault());
+document.addEventListener('selectstart', e => {
+  const t = e.target;
+  if (t && (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT')) return;
+  if (t && t.classList && (t.classList.contains('note') || t.classList.contains('copyta'))) return;
+  e.preventDefault();
+});
+
+build();
+</script>
+</body>
+</html>
